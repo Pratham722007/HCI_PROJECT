@@ -1,0 +1,37 @@
+# Model architecture configurations for H-CBM-EEG
+
+encoder:
+  name: "EEGPT"
+  pretrained_weights: "checkpoints/eegpt_pretrained.pt"
+  embedding_dim: 512
+  freeze: true
+
+hierarchical_cbm:
+  level_1:
+    description: "Neurophysiological concepts (theta, alpha, gamma band power + FAA)"
+    output_dim: 43  # 14 channels * 3 bands + 1 FAA = 43
+    hidden_dims: [256, 128]
+  level_2:
+    description: "Affective dimensions (Valence, Arousal, Dominance)"
+    output_dim: 3
+    hidden_dims: [64, 32]
+  level_3:
+    description: "Appraisal dimensions (Novelty, Goal conduciveness, Coping)"
+    output_dim: 3
+    hidden_dims: [32, 16]
+  emotion_classifier:
+    description: "Final 7-class emotion projection"
+    num_classes: 7
+    classes: ["happy", "sad", "anger", "fear", "disgust", "surprise", "neutral"]
+
+baseline_flat_mlp:
+  description: "Flat 2-layer MLP + GELU directly mapping EEGPT embedding to emotion class"
+  hidden_dim: 128
+  activation: "GELU"
+  dropout: 0.1
+  num_classes: 7
+
+explain:
+  qwen_model_name: "Qwen/Qwen2.5-1.5B-Instruct"
+  quantization: "4bit"
+  max_tokens: 128

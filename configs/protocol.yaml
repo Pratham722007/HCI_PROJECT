@@ -1,0 +1,63 @@
+# Protocol configuration for H-CBM-EEG
+
+# Sampling frequency and windowing
+fs: 256
+window_length_sec: 4.0
+window_overlap_sec: 0.0
+
+# 14 Shared channels across DENS, DEAP, and DREAMER
+shared_channels:
+  - "AF3"
+  - "F7"
+  - "F3"
+  - "FC5"
+  - "T7"
+  - "P7"
+  - "O1"
+  - "O2"
+  - "P8"
+  - "T8"
+  - "FC6"
+  - "F4"
+  - "F8"
+  - "AF4"
+
+# Preprocessing filters
+filtering:
+  bandpass: [4.0, 45.0]
+  notch: 50.0
+
+# Level 1 neurophysiological frequency band edges (Hz)
+band_edges:
+  theta: [4.0, 8.0]
+  alpha: [8.0, 13.0]
+  gamma: [30.0, 45.0]
+
+# Level 1 Frontal Alpha Asymmetry (FAA) electrode pair definition
+faa_channels:
+  left: "F3"
+  right: "F4"
+
+# Level 2 affective rating binarisation thresholds (fixed prior to testing)
+rating_thresholds:
+  dens:
+    valence: 2.5
+    arousal: 2.5
+    dominance: 2.5
+  deap:
+    valence: 5.0
+    arousal: 5.0
+    dominance: 5.0
+  dreamer:
+    valence: 3.0
+    arousal: 3.0
+    dominance: 3.0
+
+# Emotion taxonomy mapping path
+emotion_taxonomy_path: "configs/emotion_taxonomy.yaml"
+
+# Random split seeds and cross-validation setup
+split_seeds:
+  default: 42
+  n_folds: 5
+  held_out_test_ratio: 0.20

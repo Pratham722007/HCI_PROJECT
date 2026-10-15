@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hcbm"
+version = "0.1.0"
+description = "H-CBM-EEG: Hierarchical Concept Bottleneck Models for EEG Emotion Recognition"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "H-CBM-EEG Research Team" }
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "h5py",
+    "mne",
+    "pandas",
+    "scikit-learn",
+    "torch",
+    "pyyaml",
+    "matplotlib",
+    "tqdm",
+    "openneuro-py",
+    "statsmodels",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

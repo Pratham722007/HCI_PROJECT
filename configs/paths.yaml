@@ -1,0 +1,22 @@
+# Standardized relative paths for H-CBM-EEG
+
+raw:
+  dens: "data/raw/dens"
+  deap: "data/raw/deap"
+  dreamer: "data/raw/dreamer"
+
+processed:
+  root: "data/processed"
+  dens_h5: "data/processed/dens.h5"
+  deap_h5: "data/processed/deap.h5"
+  dreamer_h5: "data/processed/dreamer.h5"
+
+embeddings:
+  root: "data/embeddings"
+  dens_emb: "data/embeddings/dens_eegpt.h5"
+  deap_emb: "data/embeddings/deap_eegpt.h5"
+  dreamer_emb: "data/embeddings/dreamer_eegpt.h5"
+
+artifacts:
+  checkpoints: "checkpoints"
+  reports: "reports"
