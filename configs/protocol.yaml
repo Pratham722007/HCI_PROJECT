@@ -5,9 +5,8 @@ fs: 256
 window_length_sec: 4.0
 window_overlap_sec: 0.0
 
-# 14 Shared channels across DENS, DEAP, and DREAMER
+# 12 shared channels across FACED, DEAP, and DREAMER (rev 2: FACED has no AF3/AF4)
 shared_channels:
-  - "AF3"
   - "F7"
   - "F3"
   - "FC5"
@@ -20,7 +19,6 @@ shared_channels:
   - "FC6"
   - "F4"
   - "F8"
-  - "AF4"
 
 # Preprocessing filters
 filtering:
@@ -40,16 +38,17 @@ faa_channels:
 
 # Level 2 affective rating binarisation thresholds (fixed prior to testing)
 rating_thresholds:
-  dens:
-    valence: 2.5
-    arousal: 2.5
-    dominance: 2.5
+  # rule: "high" means rating > threshold (strict). FACED is continuous 0-7 (midpoint 3.5, exact ties dropped).
+  faced:
+    valence: 3.5
+    arousal: 3.5
+    dominance: null   # FACED has no dominance item (pseudo-label only, see dominance:)
   deap:
     valence: 5.0
     arousal: 5.0
     dominance: 5.0
   dreamer:
-    valence: 3.0
+    valence: 3.0   # integer 1-5; ~22-29% of ratings tie at 3 -> ties dropped for binary metrics
     arousal: 3.0
     dominance: 3.0
 
@@ -61,3 +60,33 @@ split_seeds:
   default: 42
   n_folds: 5
   held_out_test_ratio: 0.20
+
+# ---- Rev 2 decisions (16 Oct 2026, made before any training) ----
+primary_dataset: "faced"
+cross_corpus_datasets: ["deap", "dreamer"]   # frozen, zero-shot, never used for tuning
+faced:
+  fs_native: 250
+  clip_seconds: 30        # last 30 s of each clip (see reports/faced_inspection.md)
+  n_clips: 28
+  n_categories_fine: 9
+  # 0-based channel indices of the 12 shared channels in the pickles (cohort-2 order, mastoids last)
+  shared_channel_idx: {F7: 5, F3: 3, FC5: 9, T7: 14, P7: 23, O1: 28, O2: 29, P8: 24, T8: 15, FC6: 10, F4: 4, F8: 6}
+  # DEVIATION D1: grossly contaminated subjects (amplitude outliers surviving ICA), excluded before any training
+  excluded_subjects: [sub004, sub023, sub030, sub056]
+deap:
+  # DEVIATION D2: only s01-s16 on disk (16/32). Labels MUST come from participant_ratings.xls
+  # (matched on Experiment_id): the .dat labels are corrupted (V/A reflected to 9-x on 198/640 trials).
+  subjects: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+  label_source: "datasets/deap/Metadata/participant_ratings.xls"
+  shared_channel_idx: {F7: 3, F3: 2, FC5: 4, T7: 7, P7: 11, O1: 13, O2: 31, P8: 29, T8: 25, FC6: 21, F4: 19, F8: 20}
+dreamer:
+  fs_native: 128
+  use_last_seconds: 60
+  remove_dc: true         # ~4250 uV DC offset in raw
+  shared_channel_idx: {F7: 1, F3: 2, FC5: 3, T7: 4, P7: 5, O1: 6, O2: 7, P8: 8, T8: 9, FC6: 10, F4: 11, F8: 12}
+# Dominance: FACED has none. Category-prototype PSEUDO-label, small loss weight, masked loss,
+# evaluated only exploratorily against real DEAP/DREAMER dominance ratings.
+dominance:
+  mode: "pseudo_category_prototype"
+  loss_weight_max: 0.25
+  report_as: "exploratory"

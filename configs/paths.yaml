@@ -1,19 +1,22 @@
 # Standardized relative paths for H-CBM-EEG
 
 raw:
-  dens: "data/raw/dens"
-  deap: "data/raw/deap"
-  dreamer: "data/raw/dreamer"
+  faced: "data/raw/faced"            # symlinks -> datasets/FACED/*.pkl
+  faced_meta: "datasets/FACED/METADATA"
+  faced_ratings: "datasets/FACED/Code/Validation/Classification_validation/Svm_analysis/After_remarks"
+  deap: "datasets/deap"
+  dreamer: "datasets/DREAMER.mat"
+  dens: "datasets/dens"                # optional secondary, not used
 
 processed:
   root: "data/processed"
-  dens_h5: "data/processed/dens.h5"
+  faced_h5: "data/processed/faced.h5"
   deap_h5: "data/processed/deap.h5"
   dreamer_h5: "data/processed/dreamer.h5"
 
 embeddings:
   root: "data/embeddings"
-  dens_emb: "data/embeddings/dens_eegpt.h5"
+  faced_emb: "data/embeddings/faced_eegpt.h5"
   deap_emb: "data/embeddings/deap_eegpt.h5"
   dreamer_emb: "data/embeddings/dreamer_eegpt.h5"
 

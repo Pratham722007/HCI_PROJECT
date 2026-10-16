@@ -1,0 +1,77 @@
+{
+ "n_subjects": 23,
+ "n_clips": 18,
+ "fs": 128,
+ "channels": [
+  "AF3",
+  "F7",
+  "F3",
+  "FC5",
+  "T7",
+  "P7",
+  "O1",
+  "O2",
+  "P8",
+  "T8",
+  "FC6",
+  "F4",
+  "F8",
+  "AF4"
+ ],
+ "shared12_missing": [],
+ "shared12_idx": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "stimulus_len_samples": [
+  8576,
+  50432
+ ],
+ "stimulus_len_sec": [
+  67.0,
+  394.0
+ ],
+ "baseline_len_samples": [
+  7808,
+  7808
+ ],
+ "nan": 0,
+ "std_median": 174.22070655065062,
+ "std_range": [
+  155.60946960181948,
+  713.4367188035454
+ ],
+ "mean_abs_dc_median": 4254.508691138721,
+ "line_ratio_median": 0.01658353636702637,
+ "rating_ranges": {
+  "V": [
+   1,
+   5
+  ],
+  "A": [
+   1,
+   5
+  ],
+  "D": [
+   1,
+   5
+  ]
+ },
+ "frac_V_gt3": 0.39371980676328505,
+ "frac_A_gt3": 0.43719806763285024,
+ "frac_V_eq3": 0.21739130434782608,
+ "frac_A_eq3": 0.28743961352657005,
+ "n_trials": 414,
+ "emotion_labels_in_file": "none (only V/A/D scores; 9-class DREAMER emotions must come from the paper's clip table)",
+ "windows_last60s_4s": 6210
+}

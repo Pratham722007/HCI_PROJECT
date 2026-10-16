@@ -1,0 +1,57 @@
+# Emotion taxonomy (rev 2). FACED fine 9 -> coarse 7. Fixed before training.
+# Surprise is not present in FACED and is dropped from the 7-class set.
+coarse_classes: [happy, tenderness, anger, fear, disgust, sadness, neutral]
+
+faced:
+  fine_classes: [anger, disgust, fear, sadness, neutral, amusement, inspiration, joy, tenderness]
+  # video index (1-based, = pickle clip index + 1) -> fine category (Stimuli_info.xlsx)
+  clip_to_fine:
+    1: anger
+    2: anger
+    3: anger
+    4: disgust
+    5: disgust
+    6: disgust
+    7: fear
+    8: fear
+    9: fear
+    10: sadness
+    11: sadness
+    12: sadness
+    13: neutral
+    14: neutral
+    15: neutral
+    16: neutral
+    17: amusement
+    18: amusement
+    19: amusement
+    20: inspiration
+    21: inspiration
+    22: inspiration
+    23: joy
+    24: joy
+    25: joy
+    26: tenderness
+    27: tenderness
+    28: tenderness
+  fine_to_coarse:
+    anger: anger
+    disgust: disgust
+    fear: fear
+    sadness: sadness
+    neutral: neutral
+    amusement: happy
+    inspiration: happy
+    joy: happy
+    tenderness: tenderness
+  # class balance: happy 9 clips, neutral 4, all others 3 (note: imbalance; use macro-F1)
+
+dreamer:
+  # secondary/loose: DREAMER has no emotion labels in the .mat; the clip->emotion table must come
+  # from the DREAMER paper (Katsigiannis & Ramzan 2018) and is NOT yet transcribed.
+  status: "pending_clip_table"
+  fine_to_coarse: {amusement: happy, excitement: happy, calmness: neutral, anger: anger, disgust: disgust, fear: fear, sadness: sadness, happiness: happy}
+
+deap:
+  # quadrants only (valence/arousal > 5, ratings from participant_ratings.xls)
+  quadrants: [LVLA, LVHA, HVLA, HVHA]

@@ -9,10 +9,10 @@ encoder:
 hierarchical_cbm:
   level_1:
     description: "Neurophysiological concepts (theta, alpha, gamma band power + FAA)"
-    output_dim: 43  # 14 channels * 3 bands + 1 FAA = 43
+    output_dim: 37  # 12 channels * 3 bands + 1 FAA = 37
     hidden_dims: [256, 128]
   level_2:
-    description: "Affective dimensions (Valence, Arousal, Dominance)"
+    description: "Affective dimensions (Valence, Arousal real ratings; Dominance = pseudo-label, exploratory)"
     output_dim: 3
     hidden_dims: [64, 32]
   level_3:
@@ -22,7 +22,7 @@ hierarchical_cbm:
   emotion_classifier:
     description: "Final 7-class emotion projection"
     num_classes: 7
-    classes: ["happy", "sad", "anger", "fear", "disgust", "surprise", "neutral"]
+    classes: ["happy", "tenderness", "anger", "fear", "disgust", "sadness", "neutral"]  # see emotion_taxonomy.yaml; surprise not in FACED
 
 baseline_flat_mlp:
   description: "Flat 2-layer MLP + GELU directly mapping EEGPT embedding to emotion class"

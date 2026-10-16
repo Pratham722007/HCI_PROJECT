@@ -65,3 +65,14 @@ checkpoints/
 *.ckpt
 *.h5
 *.hdf5
+.venv-dreamer/
+datasets/DREAMER.mat
+datasets/examples_dreamer_tsception/
+
+datasets/
+# Phase 1 additions
+datasets/
+data/Processed_data/
+data/raw/faced/
+.venv/
+reports/faced_inspection.json

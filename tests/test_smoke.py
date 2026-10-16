@@ -41,13 +41,13 @@ def test_protocol_yaml():
     assert cfg.get("window_length_sec") == 4.0
     assert cfg.get("window_overlap_sec") == 0.0
 
-    # Check 14 shared channels
+    # Check 12 shared channels (FACED has no AF3/AF4)
     expected_channels = [
-        "AF3", "F7", "F3", "FC5", "T7", "P7", "O1",
-        "O2", "P8", "T8", "FC6", "F4", "F8", "AF4"
+        "F7", "F3", "FC5", "T7", "P7", "O1",
+        "O2", "P8", "T8", "FC6", "F4", "F8"
     ]
     assert cfg.get("shared_channels") == expected_channels
-    assert len(cfg.get("shared_channels")) == 14
+    assert len(cfg.get("shared_channels")) == 12
 
     # Check frequency bands
     bands = cfg.get("band_edges", {})
@@ -57,7 +57,7 @@ def test_protocol_yaml():
 
     # Check rating thresholds exist
     thresholds = cfg.get("rating_thresholds", {})
-    assert "dens" in thresholds
+    assert "faced" in thresholds
     assert "deap" in thresholds
     assert "dreamer" in thresholds
 
@@ -74,7 +74,7 @@ def test_paths_yaml():
 
     cfg = load_yaml_config(paths_path)
     assert "raw" in cfg
-    assert "dens" in cfg["raw"]
+    assert "faced" in cfg["raw"]
     assert "processed" in cfg
     assert "embeddings" in cfg
 
