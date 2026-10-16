@@ -90,3 +90,12 @@ dominance:
   mode: "pseudo_category_prototype"
   loss_weight_max: 0.25
   report_as: "exploratory"
+
+# ---- Phase 2 preprocessing parameters (locked before embeddings) ----
+preprocessing:
+  filter_order: 4            # zero-phase Butterworth (sosfiltfilt)
+  notch_q: 30.0
+  artifact_rel_k: 5.0        # window rejected if peak > max(k * subject median window peak, artifact_min_uv); before z-score
+  artifact_min_uv: 100.0
+  windows_drop_from: "start" # FACED: 30 s -> 7 x 4 s windows; the first 2 s of each clip are discarded
+  zscore: "per_subject_per_channel_over_non_rejected_windows"

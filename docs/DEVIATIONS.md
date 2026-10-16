@@ -13,3 +13,7 @@ All entries dated 16 Oct 2026 and made **before any model training or embedding 
 | D7 | FACED pipeline additions: 50 Hz notch + 4-45 Hz band-pass + re-CAR over the 12 shared channels + amplitude rejection | Processed data has no notch, 0.05-47 Hz filter, 32-ch CAR (`Code/Preprocessing/main.py`). |
 
 Open items: Level-3 appraisal table (Phase 4, needs sign-off); DREAMER clip->emotion table not on disk; EEGPT checkpoint and evaluator recruitment (Phase 0).
+
+| D8 | Artifact rule is subject-relative: reject window if peak > max(5 x subject median window peak, 100 uV), identical for all datasets; raw peak stored per window (`labels/peak_uv`) | A fixed 150 uV rule rejected 42% of DEAP windows (s09 99.5%, s11 100%) because typical raw window peak varies 20-860 uV across DEAP subjects. Decided after seeing preprocessing QC only, before any embedding/training. Rejected windows are flagged (`reject`), not dropped, so rows stay aligned. |
+| D9 | No post-hoc subject exclusion on DEAP/DREAMER; noisy subjects (DEAP s02 s04 s09 s11, DREAMER d15 d20 d21) are flagged in `reports/qc.md` for sensitivity analysis | Zero-shot corpora must not be filtered using outcomes; amplitude-only flags are reported instead. |
+| D10 | FACED 30 s -> 7 windows; the first 2 s of each clip are discarded (filter edge effects, mood still building) | Remainder must go somewhere; keeps the end of the clip where the emotion is strongest. |

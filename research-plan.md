@@ -203,7 +203,7 @@ Timeline is indicative (12 weeks, from 16 Oct 2026 ≈ done by early Jan 2027). 
 
 **Tests:** schema validator; no NaN/Inf; shape `(n, C, 1024)`; synthetic 10 Hz sine survives bandpass and 50 Hz sine is removed; same 12-channel order in all three `windows_12ch.h5`; FACED about 24,100 windows, DEAP/DREAMER window counts within 5% of expected.
 
-**Gate 2:** QC report shows comparable spectra and counts; all tests pass.
+**Gate 2 — PASSED 16 Oct 2026 for 12-ch pipeline** (`reports/qc.md`, domain-shift acc 0.64 vs 0.33 chance → substantial shift, to be discussed; windows_full.h5 and EEGPT requirements doc (2.6/2.7) still open). Original criterion: QC report shows comparable spectra and counts; all tests pass.
 
 ### Phase 3: EEGPT embeddings (Weeks 3-4)
 
