@@ -23,3 +23,7 @@ embeddings:
 artifacts:
   checkpoints: "checkpoints"
   reports: "reports"
+
+eegpt:
+  repo: "third_party/EEGPT"            # clone of github.com/BINE022/EEGPT (Apache-2.0), pinned commit in docs/EEGPT_REQUIREMENTS.md
+  checkpoint: "checkpoints/eegpt_mcae_58chs_4s_large4E.ckpt"

@@ -4,7 +4,7 @@
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **FACED** | Synapse `syn50614194` (Processed_data `syn50615881`) | Synapse DUC (check terms) | 6.2 GB | `data/raw/faced` (symlinks to `datasets/FACED`) | `downloaded` — pickles inspected; metadata in `datasets/FACED/METADATA`; **self-report ratings still missing (in `Data.zip`, syn50614821)** |
 | **DENS** (`ds003751`) | OpenNeuro | CC0 | ~15-25 GB | `datasets/dens` | `partial` (3/40 raw subjects), optional secondary |
-| **DEAP** | Web form / EULA request to dataset creators | Restricted Research EULA | ~3 GB (preprocessed .dat/.mat) | `datasets/deap` | `partial` — 16/32 subjects, .dat labels corrupted (use xls) |
+| **DEAP** | Web form / EULA request to dataset creators | Restricted Research EULA | ~3 GB (preprocessed .dat/.mat) | `datasets/deap` | `verified` — 32/32 subjects; .dat labels corrupted (use xls) |
 | **DREAMER** | Access request to authors (IEEE Dataport / authors) | Restricted Research Agreement | ~1.5 GB (.mat format) | `datasets/DREAMER.mat` | `verified` (23 subj, 14 ch, 128 Hz) |
 
 ---

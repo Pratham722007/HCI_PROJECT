@@ -2,8 +2,8 @@
 
 encoder:
   name: "EEGPT"
-  pretrained_weights: "checkpoints/eegpt_pretrained.pt"
-  embedding_dim: 512
+  pretrained_weights: "checkpoints/eegpt_mcae_58chs_4s_large4E.ckpt"
+  embedding_dim: 2048   # 4 summary tokens x 512, mean-pooled over 16 time patches (docs/EEGPT_REQUIREMENTS.md)
   freeze: true
 
 hierarchical_cbm:

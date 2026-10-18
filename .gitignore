@@ -76,3 +76,5 @@ data/Processed_data/
 data/raw/faced/
 .venv/
 reports/faced_inspection.json
+third_party/
+*.ckpt

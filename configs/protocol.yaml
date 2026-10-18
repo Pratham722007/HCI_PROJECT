@@ -74,9 +74,9 @@ faced:
   # DEVIATION D1: grossly contaminated subjects (amplitude outliers surviving ICA), excluded before any training
   excluded_subjects: [sub004, sub023, sub030, sub056]
 deap:
-  # DEVIATION D2: only s01-s16 on disk (16/32). Labels MUST come from participant_ratings.xls
-  # (matched on Experiment_id): the .dat labels are corrupted (V/A reflected to 9-x on 198/640 trials).
-  subjects: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+  # All 32 subjects on disk (D2 revised). Labels MUST come from participant_ratings.xls
+  # (matched on Experiment_id): the .dat labels are corrupted (V/A reflected to 9-x on 439/1280 trials).
+  subjects: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
   label_source: "datasets/deap/Metadata/participant_ratings.xls"
   shared_channel_idx: {F7: 3, F3: 2, FC5: 4, T7: 7, P7: 11, O1: 13, O2: 31, P8: 29, T8: 25, FC6: 21, F4: 19, F8: 20}
 dreamer:

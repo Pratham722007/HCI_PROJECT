@@ -1,5 +1,5 @@
 {
- "n_files": 16,
+ "n_files": 32,
  "shapes": [
   [
    40,
@@ -15,21 +15,21 @@
  ],
  "nan": 0,
  "flat_channel_trials": 0,
- "std_eeg_median": 17.924134944462885,
+ "std_eeg_median": 18.095079087216334,
  "std_eeg_range": [
   4.391678503356834,
-  73.4855188844619
+  103.46808563582519
  ],
  "amp": [
   -2656.4252330049085,
   2843.9056801961733
  ],
  "dat_vs_xls": {
-  "trials_mismatched": 198,
-  "of": 640,
-  "subjects_with_mismatch": 16,
+  "trials_mismatched": 439,
+  "of": 1280,
+  "subjects_with_mismatch": 32,
   "all_mismatches_are_9_minus_x": true,
-  "subjects_with_zero_rating_in_dat": 7
+  "subjects_with_zero_rating_in_dat": 14
  },
  "xls_rating_range": [
   1.0,
@@ -52,12 +52,28 @@
   13,
   14,
   15,
-  16
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32
  ],
  "rating_match_maxabs": 9.0,
- "rating_files_matched": 16,
- "mean_abs_dc": 0.23722048451011313,
- "line_ratio_median": 6.010091347373432e-07,
+ "rating_files_matched": 32,
+ "mean_abs_dc": 0.27239528974566707,
+ "line_ratio_median": 5.994379183015764e-07,
  "label_ranges": {
   "V": [
    1.0,
@@ -76,24 +92,24 @@
    9.0
   ]
  },
- "frac_high_valence": 0.53125,
- "frac_high_arousal": 0.546875,
+ "frac_high_valence": 0.553125,
+ "frac_high_arousal": 0.57578125,
  "quadrant_counts": {
-  "LVLA": 148,
-  "LVHA": 152,
-  "HVLA": 142,
-  "HVHA": 198
+  "LVLA": 274,
+  "LVHA": 298,
+  "HVLA": 269,
+  "HVHA": 439
  },
- "ratings_equal_5_exactly": 9,
+ "ratings_equal_5_exactly": 32,
  "psd_at_Hz": {
   "2": 0.0005453514503393946,
   "5": 60.548448143585844,
   "10": 7.627792924496204,
-  "20": 2.026022864419275,
-  "40": 2.008619951545514,
-  "45": 0.7895362705148949,
-  "50": 1.252096810712278e-07,
-  "60": 6.071589378534189e-10
+  "20": 1.746591499788516,
+  "40": 1.525547997355733,
+  "45": 0.6359055710591566,
+  "50": 9.400700497350875e-08,
+  "60": 4.62570658964467e-10
  },
  "channel_order_source": "DEAP documentation (not in files)",
  "shared12_present": [

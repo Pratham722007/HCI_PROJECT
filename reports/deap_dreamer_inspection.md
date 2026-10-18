@@ -2,10 +2,10 @@
 Scripts: `scripts/inspect_deap.py`, `scripts/inspect_dreamer.py` (JSON alongside).
 
 ## DEAP
-- **Only 16 of 32 subjects present** (`s01..s16.dat`). `participant_ratings.xls` covers all 32. Cross-corpus n is 16 subjects, 640 trials (≈9,600 windows), not 19,200.
+- **All 32 subjects present** (`s01..s32.dat`, added after the first inspection, which saw only s01–s16). 1,280 trials, 19,200 windows.
 - Each file: `data (40,40,8064) float64`, `labels (40,4)`; 0 NaN; 0 flat channels; 128 Hz, 63 s (3 s baseline = 384 samples). EEG std median 17.9 µV; 50 Hz PSD ~1e-7 (already filtered/notched); DC ≈ 0.24 µV.
 - Trial order in `.dat` is **Experiment_id (video) order**, not presentation `Trial` order.
-- **`.dat` labels are corrupted**: 198/640 trials (all 16 subjects) differ from the official `participant_ratings.xls`; every mismatch is exactly valence/arousal → 9 − x, giving impossible 0 ratings (7 subjects) and zero HVHA trials. **Use the xls ratings (matched on Experiment_id) as the only label source.** Using xls: V>5 53.1%, A>5 54.7%; quadrants LVLA 148 / LVHA 152 / HVLA 142 / HVHA 198; 9 trials have an exact 5 (threshold-tie).
+- **`.dat` labels are corrupted**: 439/1,280 trials (all 32 subjects) differ from the official `participant_ratings.xls`; every mismatch is exactly valence/arousal → 9 − x, giving impossible 0 ratings (14 subjects) and zero HVHA trials. **Use the xls ratings (matched on Experiment_id) as the only label source.** Using xls: V>5 55.3%, A>5 57.6%; quadrants LVLA 274 / LVHA 298 / HVLA 269 / HVHA 439; 32 trials have an exact 5 (threshold-tie).
 - Channel names are not in files (Geneva order from the DEAP docs, assumed): all 12 shared channels present (indices F7=3, F3=2, FC5=4, T7=7, P7=11, O1=13, O2=31, P8=29, T8=25, FC6=21, F4=19, F8=20).
 - Peripheral channels 32–39 must be dropped.
 

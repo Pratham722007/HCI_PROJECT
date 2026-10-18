@@ -42,7 +42,7 @@ for i, d in enumerate(DS):
     F, f, p = band_feats(x["X"][pick]); spec[d] = p.mean((0, 1))
     feats.append(F); groups += [f"{d}_{s}" for s in x["sub"][pick]]; dsl += [i] * len(pick)
 
-lines += ["", "Expected window counts: FACED 119 subjects x 28 clips x 7 = 23,324 (4 subjects excluded, D1); DEAP 16 x 40 x 15 = 9,600 (D2); DREAMER 23 x 18 x 15 = 6,210.", ""]
+lines += ["", "Expected window counts: FACED 119 subjects x 28 clips x 7 = 23,324 (4 subjects excluded, D1); DEAP 32 x 40 x 15 = 19,200; DREAMER 23 x 18 x 15 = 6,210.", ""]
 lines += ["## Per-subject noise flags (raw window peak, uV, before z-score)", "",
           "Subject median peak and rejection rate; subjects flagged if rejection > 20% or median peak > 300 uV. **Flagged subjects are kept (no post-hoc exclusion on the zero-shot corpora); they are reported for sensitivity analyses.**", "",
           "| dataset | subject | median peak uV | rejected % | flag |", "|---|---|---|---|---|"]

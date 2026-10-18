@@ -6,7 +6,7 @@ from hcbm.io import schema
 from hcbm.utils.config import load_yaml_config
 
 CFG = load_yaml_config("configs/protocol.yaml")
-EXPECT = {"faced": 119 * 28 * 7, "deap": 16 * 40 * 15, "dreamer": 23 * 18 * 15}
+EXPECT = {"faced": 119 * 28 * 7, "deap": 32 * 40 * 15, "dreamer": 23 * 18 * 15}
 
 
 @pytest.mark.parametrize("name", list(EXPECT))
