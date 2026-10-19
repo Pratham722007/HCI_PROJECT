@@ -1,10 +1,12 @@
-"""Phase 5/7: train flat + CBM variants on FACED (subject-wise 5 folds), then predict FACED val/test, DEAP, DREAMER.
+"""Phase 5/7: train flat + CBM variants on the primary dataset (protocol `primary_dataset`, rev 3 = DENS; subject-wise
+5 folds), then predict its val/test subjects and the frozen cross-corpus sets (DEAP, DREAMER).
 
-Run: .venv/bin/python -E -P scripts/train.py --tag 12ch [--search] [--variants flat,level123]
-  --tag picks data/embeddings/<dataset>_<tag>.h5 (e.g. 12ch = real EEGPT, 12ch_random = placeholder encoder).
+Run: .venv/bin/python -E -P scripts/train.py --tag dens12 [--search] [--variants flat,level123]
+  --tag picks data/embeddings/<dataset>_<tag>.h5 (dens12 = real EEGPT; *_random = placeholder encoder).
 Per fold: early stopping on the fold's validation subjects; temperature + escalation threshold fit on the same
 validation subjects; the test group and DEAP/DREAMER are only predicted, never used for any choice.
-Outputs runs/<tag>/<variant>/fold<k>.pt, fold<k>_preds.npz, summary.json; runs/<tag>/manifest.json.
+Outputs runs/<tag>/<variant>/fold<k>.pt, fold<k>_preds.npz (keys val__*, test__*, <cross>__*), summary.json;
+runs/<tag>/manifest.json.
 """
 import argparse, itertools, json, os, sys, time
 import numpy as np
@@ -24,12 +26,14 @@ ap.add_argument("--search", action="store_true"); ap.add_argument("--seed", type
 ap.add_argument("--max-epochs", type=int, default=0, help="override (smoke runs)")
 a = ap.parse_args()
 mcfg = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))
+pcfg = load_yaml_config(os.path.join(ROOT, "configs/protocol.yaml"))
+PRIMARY = pcfg["primary_dataset"]
 HP = dict(mcfg["training"])
 if a.max_epochs:
     HP["max_epochs"] = a.max_epochs
-sp = json.load(open(os.path.join(ROOT, "data/processed/faced/splits.json"))); assert_disjoint(sp)
-F = tdata.load(ROOT, "faced", a.tag)
-X = {ds: tdata.load(ROOT, ds, a.tag) for ds in ("deap", "dreamer") if os.path.exists(tdata.emb_path(ROOT, ds, a.tag))}
+sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json"))); assert_disjoint(sp)
+F = tdata.load(ROOT, PRIMARY, a.tag)
+X = {ds: tdata.load(ROOT, ds, a.tag) for ds in pcfg["cross_corpus_datasets"] if os.path.exists(tdata.emb_path(ROOT, ds, a.tag))}
 emb_dim = F["E"].shape[1]
 keep = ~F["reject"]
 test_rows = np.flatnonzero(keep & np.isin(F["subject"], sp["test"]))
@@ -79,11 +83,11 @@ for variant in a.variants.split(","):
         thr = escalation_threshold(softmax(pv["logits"], T).max(1), HP["escalation_coverage"])
         runs.save_fold(os.path.join(vdir, f"fold{k}.pt"), model, hp, emb_dim, T, thr, hist)
         out = {}
-        for ds, rows, D in [("faced_val", va, F), ("faced_test", test_rows, F)] + [(n, np.arange(len(D["E"])), D) for n, D in X.items()]:
+        for ds, rows, D in [("val", va, F), ("test", test_rows, F)] + [(n, np.arange(len(D["E"])), D) for n, D in X.items()]:
             p = predict(model, D["E"][rows])
             out.update({f"{ds}__{key}": v for key, v in p.items()}); out[f"{ds}__rows"] = rows
         np.savez_compressed(os.path.join(vdir, f"fold{k}_preds.npz"), **out)
-        pt = out["faced_test__logits"].argmax(1); yt = F["emotion"][test_rows]
+        pt = out["test__logits"].argmax(1); yt = F["emotion"][test_rows]
         s = dict(fold=k, epochs=len(hist), T=T, threshold=thr,
                  val_acc=acc(F["emotion"][va], pv["logits"].argmax(1)), val_macro_f1=macro_f1(F["emotion"][va], pv["logits"].argmax(1), labels7),
                  test_acc=acc(yt, pt), test_macro_f1=macro_f1(yt, pt, labels7))
@@ -92,7 +96,7 @@ for variant in a.variants.split(","):
     json.dump(dict(variant=variant, hp=hp, folds=summ,
                    n_params=int(sum(p.numel() for p in model.parameters()))), open(os.path.join(vdir, "summary.json"), "w"), indent=1)
 
-json.dump(dict(tag=a.tag, seed=a.seed, git_commit=runs.git_commit(ROOT), ckpt_sha256=F["ckpt_sha256"], input_scale=F["scale"],
+json.dump(dict(tag=a.tag, primary=PRIMARY, seed=a.seed, git_commit=runs.git_commit(ROOT), ckpt_sha256=F["ckpt_sha256"], input_scale=F["scale"],
                appraisal_status=F["meta"].get("appraisal_status"), unreliable_raters=F["meta"].get("unreliable_raters"),
                cross_corpus=sorted(X), hp_search=bool(search)),
           open(os.path.join(runs.run_dir(ROOT, a.tag), "manifest.json"), "w"), indent=1)

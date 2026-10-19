@@ -1,379 +1,240 @@
-# H-CBM-EEG: Research Plan
+# H-CBM-EEG: Research Plan (rev 3, 20 Oct 2026)
 
 **Hierarchical Concept Bottleneck Model for Trustworthy EEG-to-Emotion LLMs**
 
-> **Rev 2 changes (read first).** All data is now in `datasets/`. SEED-VII is unavailable, so **FACED** (123 subjects, 28 clips, 32 ch, 250 Hz, 9 emotion categories) replaces it as the primary train/validation/test corpus. DEAP and DREAMER stay as frozen zero-shot cross-corpus tests. DENS (only 3 of 40 raw subjects on disk) is demoted to an optional secondary in-corpus check. Consequences: the shared montage shrinks from 14 to **12 channels** (FACED has no AF3/AF4), FACED has **no dominance rating**, and the 7-class set loses **surprise**. §2, §4, and Phases 0-4 below are rewritten accordingly.
+> **Rev 3 changes (read first).** Training data is now **DENS** (40 subjects); **DEAP** and **DREAMER** remain frozen zero-shot
+> test sets; **FACED is deferred** (its processed data and code stay, so it can be added back as a second training corpus).
+> Goal for this revision: a **complete, correct pipeline in 3 days** (21-23 Oct 2026). Result quality is secondary;
+> every stage must run end to end and produce its report. Consequences: 6 emotion classes instead of 7 (no neutral in the
+> DENS epochs), real dominance ratings (the FACED dominance pseudo-label goes away), gamma band 30-40 Hz (DENS is low-passed
+> at 40 Hz), and the 12-channel shared montage is kept so FACED stays compatible.
 
-Sources: the deck `H-CBM-EEG_Presentation.pptx (1).pdf` (7 Oct 2026), the execution plan `H-CBM-EEG Execution Plan and Antigravity Prompts (DENS to DEAP DREAMER).docx`, and the current repo skeleton (`configs/`, `src/hcbm/`, `docs/DATASETS.md`). Where the deck and the execution plan disagree, **the execution plan wins** (DENS replaces SEED-VII). All such deviations are listed in §2.
-
-Plan date: 16 Oct 2026. **Revised 16 Oct 2026 (rev 2): FACED is now the primary training dataset (replacing SEED-VII); DENS is demoted to optional/secondary.**
+Sources: the deck `H-CBM-EEG_Presentation.pptx (1).pdf` (7 Oct 2026), the dataset audits of 18-20 Oct 2026, and the code
+already in `src/hcbm/` and `scripts/` (rev 2 built and tested the full pipeline on FACED; rev 3 re-points it at DENS).
 
 ---
 
-## 1. Research Problem and Hypotheses
+## 1. Research problem, method, questions (from the deck, unchanged)
 
-### 1.1 Problem (deck slide 2)
-EEG-to-LLM emotion systems (e.g. E²-LLM) predict and explain emotions, but:
+**Problem (slide 2).** EEG-to-LLM emotion systems (e.g. E²-LLM) have (1) hallucinated, unverifiable explanations, (2) an
+opaque MLP projection with no intermediate psychological concepts, (3) no human validation. No framework offers
+interpretable reasoning + faithfulness verification + human-in-the-loop validation together.
 
-| # | Challenge | Consequence |
-|---|-----------|-------------|
-| 1 | Hallucinated explanations | Fluent text not grounded in EEG evidence; faithfulness unverifiable |
-| 2 | Black-box projection (opaque MLP) | Clinicians cannot inspect intermediate reasoning; no psychological concepts |
-| 3 | No human validation | Only automated metrics; no expert trust or clinical-utility evaluation |
-
-**Research gap:** no EEG-LLM framework offers all three of (a) interpretable reasoning, (b) faithfulness verification, (c) human-in-the-loop validation.
-
-### 1.2 Proposed method
-Frozen **EEGPT** encoder → **3-level hierarchical concept bottleneck** (inspired by Scherer's Component Process Model) → emotion head → **Qwen** explanation, with a confidence estimator routing low-confidence cases to a human reviewer.
-
+**Method (slide 4).**
 ```
-EEG window (12ch shared montage, 4 s, 256 Hz)
-  → EEGPT encoder (frozen) → embedding (512-d)
-  → Level 1  Neurophysiological : theta / alpha / gamma power (x12 ch) + frontal alpha asymmetry (37 concepts)
-  → Level 2  Affective          : valence, arousal (real ratings), dominance (pseudo-label, see §4.2)
-  → Level 3  Cognitive appraisal: novelty, goal conduciveness, coping potential
-  → Emotion classifier (7 classes)
-  → Confidence estimator P(concept)
-        ├─ high confidence → Qwen explanation
-        └─ low confidence  → human reviewer (escalate / intervene)
+EEG window (12 ch, 4 s, 256 Hz) -> EEGPT encoder (frozen) -> embedding (4 x 512 = 2048-d)
+  -> Level 1 Neurophysiological : theta / alpha / gamma power x 12 ch + frontal alpha asymmetry (37 concepts)
+  -> Level 2 Affective          : valence, arousal, dominance (real self-ratings on DENS)
+  -> Level 3 Cognitive appraisal: novelty, goal conduciveness, coping (category pseudo-labels, Scherer CPM)
+  -> Emotion classifier (6 classes)
+  -> Confidence estimator P(concept / class)
+       |- high confidence -> Qwen explanation
+       '- low confidence  -> human reviewer (escalate / intervene)
 ```
 
-### 1.3 Research questions (deck slide 5)
+| RQ | Question | Evidence |
+|---|---|---|
+| RQ1 | Does the hierarchical CBM match the flat projection in-corpus and generalise better cross-corpus? | Sim 1 + Sim 3 |
+| RQ2 | Are CBM explanations more faithful (change when a concept is flipped)? | Sim 2 (FaithScore) |
+| RQ3 | Do experts rate CBM explanations as more trustworthy/useful, and does low confidence flag errors? | Human eval + HITL |
 
-| RQ | Question | Expected result | Primary evidence |
-|----|----------|-----------------|------------------|
-| **RQ1** | Does the hierarchical CBM match or beat a flat projection in accuracy, and generalise better cross-corpus? | Comparable in-corpus, better cross-corpus | Sim 1 + Sim 3 (ablation) |
-| **RQ2** | Are CBM explanations more faithful (do they change when a concept is flipped)? | Higher FaithScore than flat | Sim 2 (counterfactual perturbation) |
-| **RQ3** | Do experts rate CBM explanations as more trustworthy and clinically useful, and does low confidence flag wrong predictions? | Higher human ratings; low confidence ↔ errors | Human eval + HITL experiments |
+Hypotheses H1-H6 are kept from rev 2: H1 CBM macro-F1 within +-2 pp of flat on DENS test subjects; H2 CBM beats flat
+zero-shot on DEAP/DREAMER valence/arousal (paired subject bootstrap); H3 FaithScore(CBM) > FaithScore(flat) with placebo
+false-positive rate < 15%; H4 raters prefer CBM (Wilcoxon, FDR); H5 escalated cases have higher error, AURC < random;
+H6 concept intervention raises accuracy. **Negative results are reported as such.**
 
-### 1.4 Hypotheses (falsifiable)
-- **H1:** CBM macro-F1 on FACED held-out subjects is within ±2 pp of the flat baseline (non-inferiority).
-- **H2:** CBM cross-corpus (DEAP/DREAMER, zero-shot) valence/arousal accuracy exceeds flat by a paired-bootstrap-significant margin.
-- **H3:** FaithScore(CBM) > FaithScore(flat), and the placebo-perturbation false-positive rate is low (<15%).
-- **H4:** Blind raters score CBM higher on faithfulness, plausibility, clarity, actionability (Wilcoxon, FDR-corrected).
-- **H5:** Error rate among escalated (low-confidence) cases is higher than among retained cases; AURC beats random escalation.
-- **H6:** Intervening on concepts (replacing predicted with ground truth) monotonically raises accuracy.
-
-> **Report negative results honestly.** The deck states "expected results"; the paper must state which ones the data did not support.
-
-### 1.5 Contributions to demonstrate (deck slide 6)
-1. Hierarchical concept bottleneck for EEG-LLM.
-2. **FaithScore**: faithful explanation changes ÷ total perturbations.
-3. Dual human-in-the-loop: clinician intervention + confidence escalation.
-4. Blind human-judge evaluation (faithfulness, plausibility, clarity, actionability).
+Contributions (slide 6): hierarchical CBM for EEG-LLM; FaithScore; dual human-in-the-loop (intervention + escalation);
+blind human-judge evaluation.
 
 ---
 
-## 2. Deviations from the Deck (Decisions Already Made)
+## 2. Datasets (checked on disk 20 Oct 2026)
 
-| Deck says | Reality / decision | Action |
-|-----------|-------------------|--------|
-| Primary dataset SEED-VII (20 subj, 62 ch, 24,444 segments, 7 classes) | Not available. **FACED**: 123 subj, 28 clips/subj, 32 ch, 250 Hz, 30 s/clip, 9 categories (anger, disgust, fear, sadness, amusement, inspiration, joy, tenderness, neutral). 4 s windows give 7/clip, about 24,100 windows, close to SEED-VII's 24,444 | Update slide 3 |
-| "Same dataset as E²-LLM, so baseline comparison is fair" | No longer true | **Delete.** Compare only against our own flat baseline on identical embeddings/splits. Never compare to E²-LLM's published numbers. |
-| Cohen's kappa with 3+ raters | Cohen's kappa is for 2 raters only | Use **Fleiss' kappa or Krippendorff's alpha** |
-| 7 emotion classes incl. surprise | FACED has no surprise | Coarse 7-class set redefined (§4.2). Surprise dropped from the deck |
-| Level 2 = valence, arousal, dominance | FACED has valence/arousal self-ratings but **no dominance** (verify against its behavioural file) | V and A trained on real ratings; dominance is a category-prototype pseudo-label, flagged as such (or dropped; see §4.2) |
-| EEGPT on full montage | 32 / 32 / 14 channels across FACED / DEAP / DREAMER | Primary setting = **shared 12-channel montage** (FACED ∩ DEAP ∩ DREAMER); full-montage FACED = secondary |
-| DENS as primary (execution plan) | Only 3 raw subjects local | Optional secondary only |
+| Dataset | Role | What we use | Subjects | Labels |
+|---|---|---|---|---|
+| **DENS** (Mishra et al. 2023, OpenNeuro ds003751) | **Training / validation / in-corpus test** | 475 click-locked 7 s epochs, 128-ch EGI, 250 Hz, already 1-40 Hz filtered (`datasets/dens_old/Physiological Data/PreProcessed-Emotion (Group-wise)/EEG_Data/Group-01..08/*.mat`, each `data` (128, 1751) float32 µV) | 40 (4-32 epochs each) | self-reported emotion word per click (8 groups) + that trial's valence/arousal/dominance/liking (1-9) |
+| **DEAP** | Zero-shot test | `data/processed/deap/windows_12ch.h5` (already built) | 32 | V/A/D 1-9 from `participant_ratings.xls` (local `.dat` copy is modified, D2); quadrants |
+| **DREAMER** | Zero-shot test | `data/processed/dreamer/windows_12ch.h5` (already built) | 23 | V/A/D 1-5; clip -> target emotion table (D12) |
+| FACED | Deferred (optional 2nd training corpus) | `data/processed/faced/` kept | 119 | 9 categories, V/A |
 
----
+### 2.1 DENS: why the click-locked epochs are the primary training data
+- **Raw continuous EEG is incomplete in the official release.** OpenNeuro v1.0.6 has truncated `.fdt` files for 30/40
+  subjects (audit 20 Oct); only mit003, 004, 061, 076, 108, 117, 121, 123, b2017007 are complete (+ mit014 from the old
+  release's intact `.mff`). Ten subjects are too few for subject-wise CV.
+- **The group-wise epochs cover all 40 subjects** and carry a categorical label: each 7 s epoch is locked to a mouse click
+  where the participant marked feeling a named emotion during a 60 s clip (the dataset's "temporally localised emotional
+  events"). This matches how the DENS authors themselves classify emotions.
+- **Ratings join exactly.** Filename `<Emotion>_<subject>Trial-<t>Click-<k>-slor.mat`: `t` is the 1-based row in the
+  subject's behavioural CSV (`dens_old/.../Raw Data/Behavioural Data/<subject>.csv`, rows with a valence response;
+  neutral_1 is trial 1), `k` the subject's cumulative click count. Verified: all 475 epochs find their trial row.
+- **Optional extension (not in the 3-day scope):** raw 60 s clip windows for the 10 complete subjects (ratings only, plus
+  neutral clips) via `mne.io.read_raw_eeglab`; events are in samples at 250 Hz.
 
-## 3. Current State of the Repo (Audit, 16 Oct 2026)
-
-**Done (Prompt 1 skeleton):**
-- `configs/{protocol,paths,model}.yaml` populated (**14** shared channels, 4 s windows @ 256 Hz, band edges, 4-45 Hz bandpass, 50 Hz notch, thresholds, 5-fold, 20% held-out). Written for DENS; needs the rev 2 changes below.
-- `src/hcbm/{io,preprocess,concepts,models,train,eval,explain,hitl,utils}/` stubs (only `utils/config.py`, `utils/seed.py` have code).
-- `environment.yml`, `pyproject.toml`, `Makefile`, `tests/test_smoke.py`, `docs/DATASETS.md`.
-
-**Data on disk (`datasets/`, untracked), checked 16 Oct 2026:**
-
-| Dataset | What is present | Gap |
-|---------|-----------------|-----|
-| **FACED** (6.2 GB) | `sub000.pkl` … `sub122.pkl` (123 files, 53.7 MB each). Each is a NumPy array `(28, 32, 7500)` float64 = clips x channels x samples (30 s @ 250 Hz). | **No channel names, labels, or ratings in the files.** Need FACED's channel list, clip→category table and self-report file (valence/arousal etc.) from the dataset release. Confirm clip order. |
-| **DEAP** (1.6 GB) | `data_preprocessed_python/s01..s32.dat`, Metadata (`participant_ratings.xls`, etc.) | Ready |
-| **DREAMER** | `DREAMER.mat` (432 MB) + example notebooks | Ready |
-| **DENS** (4.6 GB) | Raw: `mit003/004/014.zip` (3 of 40 subjects), group-wise preprocessed `EEG_Data.zip`, behavioural zip, papers, stimuli | Too few subjects for subject-wise CV. Optional secondary only. |
-
-**Inconsistencies to fix in the repo:**
-- `configs/protocol.yaml` and `README.md` still say DENS is primary, 14 shared channels, 256 Hz. Needs: FACED as primary, 12 shared channels (drop AF3, AF4), a `faced` thresholds entry (scale from its rating file).
-- `configs/model.yaml` `embedding_dim: 512` is an assumption → verify against EEGPT's actual output (Phase 3).
-- `README.md`/`pyproject.toml` do not mention the deck's SEED-VII; fine, but the deck itself must be updated (Phase 11).
-- `configs/emotion_taxonomy.yaml` is referenced but **does not exist yet**. `configs/model.yaml` lists 7 classes including surprise; replace per §4.2. L1 `output_dim: 43` becomes 12 ch x 3 bands + 1 FAA = **37**.
-- `.gitignore` is modified and `datasets/` is untracked; make sure raw data and the PDF are ignored or intentionally tracked before the first data commit.
+### 2.2 DENS caveats to state in the paper
+- Preprocessing of the group-wise epochs is the authors' (1-40 Hz; the `-slor` suffix and reference are undocumented).
+  We re-apply our own CAR over the 12 channels and per-subject z-score; we do not undo theirs.
+- Labels are self-reported, click-localised, and unevenly distributed (4-32 epochs per subject; mit076/081 have 4).
+- 475 epochs is small (SEED-VII on the deck had 24,444 segments). Expect high variance; report CIs.
+- Only 7 s per label, so windows overlap (section 4.2); epochs are never split across folds.
 
 ---
 
-## 4. Experimental Protocol (Locked Before Any Training)
-
-Write all of these into `configs/protocol.yaml` and commit **before** running experiments. Changing a locked item after seeing results must be logged as a deviation.
-
-### 4.1 Hard rules
-1. `data/raw/` is read-only. Datasets under `datasets/` are copied/linked in, never modified.
-2. No absolute paths in code; everything from `configs/*.yaml`.
-3. Seed 42 default; log all seeds.
-4. **DEAP and DREAMER are never used for tuning**: hyperparameters, loss weights, temperature scaling, escalation threshold are chosen on FACED validation subjects only.
-5. **Splits are by subject**, asserted in code (no subject in both train and test).
-6. One unified HDF5 schema: `X [n_windows, channels, samples] float32`, `ch_names`, `fs=256`, `subject_id`, `trial_id`, `window_idx`, `labels/` (raw + processed), `meta` JSON (provenance).
-7. **No bypass** around the concept bottleneck in the main model (bypass is an extra ablation only).
-8. If real data contradicts an assumption, stop and record it; do not silently adapt.
-
-### 4.2 Locked design decisions
+## 3. Decisions (locked before training; logged in `docs/DEVIATIONS.md`)
 
 | Item | Decision |
-|------|----------|
-| Emotion taxonomy | `configs/emotion_taxonomy.yaml`. FACED 9 → coarse 7: **happy** (amusement, joy, inspiration), **tenderness**, anger, fear, disgust, sadness, neutral (**surprise removed**; the happy/tenderness grouping is a proposal for you to approve). Fine 9-class label kept. DREAMER 9 → coarse 7 where possible (amusement, excitement → happy; calmness → neutral; **secondary**, loose); DEAP = quadrants only |
-| Rating binarisation | FACED at the midpoint of its own scale (confirm from rating file); DEAP 5 (1-9); DREAMER 3 (1-5). Also report Spearman (scale-free). Fixed before seeing results |
-| Windowing | 4 s non-overlapping @ 256 Hz = 1024 samples (confirm against EEGPT). FACED: 30 s clip @ 250 Hz → resample to 256 Hz → 7 windows/clip (2 s discarded), about 123 x 28 x 7 = 24,100 windows. All windows of a clip share its label, so **never split windows of one clip/subject across train and test** |
-| Preprocessing | Bandpass 4-45 Hz (zero-phase Butterworth), 50 Hz notch, common average reference, resample to 256 Hz, per-subject z-score, amplitude-threshold artifact rejection (report rejection rate per subject) |
-| Shared montage | **12 ch**: F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 (FACED lacks AF3/AF4, so the old 14-ch set cannot be used); CAR computed **over those 12**. FAA = ln(α F4) − ln(α F3). Verify FACED channel names first (not stored in the pickles) |
-| Splits (FACED) | 123 subjects: subject-wise 5-fold CV + one fixed held-out test group (20% ≈ 25 subjects). Validation only from FACED training subjects. Note: all subjects watch the same 28 clips, so clip identity is shared between train and test; report this as a limitation and add a clip-held-out check (hold out e.g. 1 of 3-4 clips per category) as a secondary result |
-| Level 1 | Welch band power (theta 4-8, alpha 8-13, gamma 30-45) per channel + FAA; z-score per subject; tertile bins per subject. **Identical code for all datasets**; computed from the 12-ch windows only, never from model outputs. Note gamma (30-45 Hz) is muscle-contaminated in scalp EEG; flag in limitations |
-| Level 2 | Valence and arousal from real self-ratings (FACED, DEAP, DREAMER; rescaled to 0-1 per dataset, plus per-subject z-scores). **Dominance: FACED has none**, so train it on category-prototype pseudo-labels (flagged) with a masked loss, evaluate it only against real ratings on DEAP/DREAMER as an exploratory result. Alternative: drop dominance entirely (decision needed) |
-| Level 3 | Category-level pseudo-labels from Scherer CPM appraisal predictions, in `configs/appraisal_profiles.yaml` (novelty, goal conduciveness, coping in [-1, 1]; each row has citation + confidence high/med/low). **Reviewed and approved by you before freezing. Always labelled pseudo-labels.** |
-| Baseline | Flat 2-layer MLP + GELU on the same embeddings, same splits, similar parameter order |
-| Explainer | Qwen2.5 1.5B-3B Instruct, deterministic decoding, prompting only (no LoRA), must use only supplied concepts |
-| Statistics | Bootstrap CIs resampling **subjects** (not windows); paired bootstrap/permutation for CBM vs flat; Wilcoxon + effect size for ratings; FDR correction across criteria |
+|---|---|
+| Emotion classes | **6 coarse classes: happy, surprise, fear, disgust, anger, sadness** (deck's 7 minus neutral; DENS click epochs contain no neutral). Mapping in 3.1 |
+| Shared montage | Keep **12 ch**: F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 (FACED-compatible; DEAP/DREAMER files reused as-is). EGI mapping in 3.2 |
+| Level 1 | Welch band power theta 4-8, alpha 8-13, **gamma 30-40 Hz** (was 30-45; DENS is low-passed at 40) per channel + FAA = ln(alpha F4) - ln(alpha F3); per-subject z; tertile bins. Same code on all datasets |
+| Level 2 | DENS: real valence, arousal, **dominance** (1-9, rescaled to 0-1, binarise > 0.5 = rating > 5, same rule as DEAP). DEAP 1-9 @5, DREAMER 1-5 @3; ties dropped. D3 dominance pseudo-label retired for DENS |
+| Level 3 | Category pseudo-labels from `configs/appraisal_profiles.yaml`, a `dens` section with the 6 classes (Scherer CPM; **draft, needs your approval**). Always labelled pseudo-labels |
+| Windows | 7 s epoch @ 250 Hz -> resample to 256 Hz (1792 samples) -> **4 x 4 s windows, stride 1 s** (overlapping); ~1,900 windows. All windows of an epoch share its label and fold |
+| Preprocessing (DENS) | Select 12 channels -> band-pass 4-45 Hz (effective 4-40) -> CAR over the 12 -> resample 250->256 -> artifact flag (D8 rule) -> per-subject z-score. No notch needed (already low-passed at 40 Hz) |
+| Splits | Subject-wise: fixed test group of 8 subjects (20%) + 5 folds over the other 32; seed 42; asserted in code |
+| Baseline | Flat 2-layer MLP + GELU on identical embeddings and splits (never compared to E²-LLM's published numbers) |
+| Explainer | Qwen2.5-1.5B-Instruct (3B if GPU time allows), greedy decoding, prompting only, must use only the supplied concepts |
+| Statistics | Subject-bootstrap CIs; paired bootstrap CBM vs flat; Wilcoxon + rank-biserial + BH-FDR for ratings; Fleiss' kappa / Krippendorff's alpha (not Cohen's kappa, which is for 2 raters) |
+| Hard rules | DEAP/DREAMER never used for any choice (hyperparameters, temperature, thresholds, EEGPT input scale); `datasets/` read-only; no bypass around the bottleneck in the main model |
 
-### 4.3 Metrics
+### 3.1 Emotion taxonomy (6 classes)
 
-| Experiment | Metrics |
-|-----------|---------|
-| In-corpus FACED | Accuracy, macro-F1 (coarse 7-class and fine 9-class), concept accuracies (L1 R²/corr, L2 binary acc, L3 MAE), mean ± std across folds |
-| Cross-corpus (Sim 1) | Valence/arousal binary acc & macro-F1 (DEAP, DREAMER); DEAP 4-quadrant acc; DREAMER 7-class (secondary); Spearman/Pearson of predicted vs. real L2 with subject-bootstrap CIs |
-| Ablation (Sim 3) | Same metrics for flat / L1 only / L1+L2 / L1+L2+L3 (/ bypass extra) |
-| FaithScore (Sim 2) | Faithful changes ÷ total perturbations; placebo false-positive rate; judge reliability vs. your 20 manual labels |
-| HITL | Intervention curves (0-100% concepts corrected, random vs. uncertainty-ordered); risk-coverage curve, AURC, ECE before/after temperature scaling |
-| Human eval | Means ± bootstrap CI per criterion, Wilcoxon + effect size, Fleiss' kappa / Krippendorff's alpha, split by correct vs. wrong prediction |
+| Coarse class | DENS group (self-reported words) | DENS epochs | DREAMER clips |
+|---|---|---|---|
+| happy | G1 Amused, Delighted, Happy, Joyous + G2 Adventurous, Aroused, Excited, Lust, Passionate | 62 + 68 = 130 | amusement 3, 12; excitement 5, 16; happiness 7, 13 |
+| surprise | G3 Alarmed, Startled, Tense | 62 | surprise 2, 18 |
+| disgust | G4 Disgust, Hate | 65 | 6, 10 |
+| fear | G5 Afraid | 50 | 4, 15 |
+| anger | G6 Angry, Distress | 62 | 8, 14 |
+| sadness | G7 Depressed, Despondent, Dissatisfied, Melancholic, Miserable, Taken Aback + G8 Sad | 61 + 45 = 106 | 9, 17 |
+| *(excluded)* | none | none | calmness 1, 11 |
 
----
+G3 is closer to "alarm" than pure surprise and G7 contains "Taken Aback"; we follow the DENS authors' grouping and say so.
+DREAMER now has 16/18 clips with a class (was 14 under rev 2). DEAP: quadrants only.
 
-## 5. Implementation Plan by Phase
+### 3.2 EGI HydroCel-128 -> 10-10 channels
+Nearest electrode by angle after centring both MNE montages (`GSN-HydroCel-129` vs `standard_1005`):
 
-Timeline is indicative (12 weeks, from 16 Oct 2026 ≈ done by early Jan 2027). **Build order: finish Phases 1-3 on FACED first, then add DEAP/DREAMER via the same scripts.** Every phase has a **gate**: do not proceed until it passes.
+| 10-10 | F7 | F3 | FC5 | T7 | P7 | O1 | O2 | P8 | T8 | FC6 | F4 | F8 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| EGI | E33 | E24 | E34 | E39 | E58 | E70 | E83 | E96 | E115 | E116 | E124 | E122 |
+| angle | 6.4° | 2.9° | 0.5° | 7.1° | 5.3° | 4.9° | 4.9° | 5.3° | 6.5° | 0.9° | 4.0° | 6.7° |
 
-### Phase 0: Access, setup, risk removal (Week 1)
-
-| Step | Task | Output |
-|------|------|--------|
-| 0.1 | Get EEGPT code + checkpoint from the official repo; record path in `configs/paths.yaml` (currently `checkpoints/eegpt_pretrained.pt`) | Checkpoint on disk, sha256 noted |
-| 0.2 | Create Hugging Face account / Qwen access; Kaggle or Colab account for the GPU stage | Accounts ready |
-| 0.3 | Build env: `conda env create -f environment.yml` (Python 3.11, CPU torch); `make setup && make test` | Green smoke test |
-| 0.4 | **Recruit ≥3 evaluators now** (longest lead time; ideally clinicians/psychologists, plus consent) | Names + availability |
-| 0.5 | **Obtain FACED metadata** (not in the pickles): channel list/order, clip→category table, per-subject self-report ratings (valence, arousal, discrete emotion intensities), clip order in each pickle. Source: the FACED release (Synapse). Decide dominance handling (§4.2). DENS needs no further download unless you want the secondary check | `docs/FACED_META.md` + raw metadata files |
-| 0.6 | Confirm DEAP/DREAMER licence/EULA status is documented (files are already local; record terms in `docs/DATASETS.md`) | Updated registry |
-| 0.7 | Fix `.gitignore` so `datasets/`, `data/raw`, `data/processed`, `data/embeddings`, `checkpoints/` are ignored | Clean `git status` |
-
-**Gate 0:** env works, EEGPT checkpoint present, evaluator recruitment started, FACED metadata in hand.
-
-### Phase 1: Data acquisition and inspection (Weeks 1-2)
-
-| Step | Task | Output |
-|------|------|--------|
-| 1.1 | Link FACED pickles read-only into `data/raw/faced/` (do not unpickle untrusted files outside an isolated env; use `python -I`). Keep DENS archives untouched unless the secondary check is pursued | Linked tree |
-| 1.2 | Write `scripts/inspect_faced.py` → `reports/faced_inspection.md` answering **all** items below with evidence (filenames, example values) | Inspection report |
-| 1.3 | Same for DEAP (`scripts/inspect_deap.py`) and DREAMER (use `datasets/dreamer-eeg.ipynb` as a starting point) | Short reports |
-| 1.4 | Update `docs/DATASETS.md` statuses (`not downloaded` → `downloaded` → `verified`) | Registry |
-
-**Items the FACED inspection (`scripts/inspect_faced.py` → `reports/faced_inspection.md`) must answer:**
-- (a) pickle contents: array shape per subject (confirmed `(28, 32, 7500)` float64 on sub000), identical across all 123?; NaN/Inf/flat channels; amplitude range; evidence of prior filtering/ICA/referencing; fs (expected 250 Hz)
-- (b) channel names and order; does it include A1/A2 or others; mapping to the 12 shared channels
-- (c) clip order and clip→emotion-category table; how many clips per category
-- (d) rating file: columns, scale, range, missing values; is there any dominance column
-- (e) subject IDs vs. file indices (sub000..sub122); any excluded/low-quality subjects in the release
-- (f) per-subject spectra and amplitude sanity plots (4-45 Hz power, 50 Hz line noise present or removed)
-- (g) the same inspection for DEAP and DREAMER (use `datasets/dreamer-eeg.ipynb` and `deap/EDA_DEAP.ipynb` as starting points)
-- (h) optional: DENS archive structure, if you want the secondary check
-
-**Gate 1 — FACED part PASSED 16 Oct 2026** (see `reports/faced_inspection.md`, `reports/deap_dreamer_inspection.md`, `docs/DEVIATIONS.md`); DEAP/DREAMER caveats recorded there. Original criterion: report answers a-h; wrong assumptions listed at the top; decisions in §4.2 updated (rating scale, dominance, channel set).
-
-### Phase 2: Loaders and preprocessing (Weeks 2-3)
-
-| Step | Module / file | Notes |
-|------|---------------|-------|
-| 2.1 | `src/hcbm/preprocess/pipeline.py`: pure functions: `bandpass`, `notch`, `car`, `resample`, `zscore_subject`, `cut_windows`, `reject_artifacts` | Identical for all datasets; params from `protocol.yaml` |
-| 2.2 | `src/hcbm/io/faced.py` + `configs/channel_map_faced.yaml` | Load each `subNNN.pkl` (28 clips x 32 ch x 7500), select the 12 shared channels by name, resample 250→256 Hz, shared pipeline (data may already be filtered; apply only what is missing), cut 7 x 4 s windows per clip; labels: fine category, coarse 7-class, valence/arousal ratings raw + per-subject normalised, subject_id, trial_id (= clip), window_idx. DEAP also has 32 ch here but keep the 12 for the primary setting |
-| 2.3 | `src/hcbm/io/deap.py` | `pickle.load(f, encoding='latin1')`; keep first 32 EEG ch; drop first 3 s baseline (384 samples @128 Hz); data already 4-45 Hz, CAR, 128 Hz → resample to 256 Hz, z-score; ~15 windows/trial, ~19,200 total; labels V/A/D/liking + binary @5 + quadrants |
-| 2.4 | `src/hcbm/io/dreamer.py` | Last 60 s of each stimulus clip; remove DC offset, shared bandpass/notch, amplitude rejection (no ICA), CAR over the 12 shared channels, resample, z-score; ~6,200 windows; V/A/D (1-5) + binary @3 + 9-emotion → 7-class map |
-| 2.5 | `src/hcbm/io/schema.py`: HDF5 writer + validator | Used by every loader |
-| 2.6 | Outputs per dataset: `windows_12ch.h5` (primary) and `windows_full.h5` (FACED/DEAP 32 ch where EEGPT's vocabulary allows; secondary) | |
-| 2.7 | `docs/EEGPT_REQUIREMENTS.md`: EEGPT's expected window length, fs, channel vocabulary, amplitude scaling | **If it conflicts with 4 s / 256 Hz, stop and decide** |
-| 2.8 | `scripts/qc_cross_dataset.py` → `reports/qc.md` | See below |
-
-**QC report contents:** mean spectra per dataset; band-power distributions pre/post z-score; amplitude distributions; rejection rates; windows per subject; label distributions; **domain-shift check** (logistic regression on band-power predicting dataset of origin; chance = 1/3; high accuracy = strong dataset shift that the paper must discuss).
-
-**Tests:** schema validator; no NaN/Inf; shape `(n, C, 1024)`; synthetic 10 Hz sine survives bandpass and 50 Hz sine is removed; same 12-channel order in all three `windows_12ch.h5`; FACED about 24,100 windows, DEAP/DREAMER window counts within 5% of expected.
-
-**Gate 2 — PASSED 16 Oct 2026 for 12-ch pipeline** (`reports/qc.md`, domain-shift acc 0.64 vs 0.33 chance → substantial shift, to be discussed; windows_full.h5 and EEGPT requirements doc (2.6/2.7) still open). Original criterion: QC report shows comparable spectra and counts; all tests pass.
-
-### Phase 3: EEGPT embeddings (Weeks 3-4)
-
-| Step | Task |
-|------|------|
-| 3.1 | `src/hcbm/models/eegpt_encoder.py`: load checkpoint, `eval()`, no grad, replicate EEGPT's channel vocabulary and amplitude scaling exactly |
-| 3.2 | `scripts/extract_embeddings.py <dataset> <full\|12ch>`: batched, resumable, `--device` flag, progress bar + ETA; writes `data/embeddings/<dataset>_<variant>.h5` row-aligned with windows (same subject_id, trial_id, window_idx) + hash of source file and checkpoint. CPU is fine (EEGPT ≈10M params), run once and cache |
-| 3.3 | Primary: `12ch` for all three datasets. `full` for FACED only (secondary) |
-| 3.4 | `scripts/probe.py`: logistic regression on frozen FACED embeddings (subject-wise split) for binary valence, binary arousal and coarse emotion vs. majority baseline |
-
-**Tests:** row counts match windows files; no NaN; determinism (re-run 50 windows, identical output).
-
-**Gate 3:** probe beats chance on FACED. **If it does not, report that before continuing**; the entire project depends on the embedding carrying signal (fallbacks: check scaling/channel vocab, try the full-montage variant, review window length).
-
-### Phase 4: Concept targets and labels (Week 4)
-
-| Step | File | Notes |
-|------|------|-------|
-| 4.1 | `src/hcbm/concepts/level1.py` | Welch band power per channel, FAA, per-subject z, tertile bins; same code on all datasets; unit test with synthetic 10 Hz signal |
-| 4.2 | `src/hcbm/concepts/level2.py` | Real V/A/D ratings; binarise with locked thresholds; rescale to 0-1 per dataset + keep raw and per-subject z |
-| 4.3 | `configs/appraisal_profiles.yaml` + `src/hcbm/concepts/level3.py` | Map each of the **9 FACED categories** (and DREAMER's 9) → novelty/goal/coping with Scherer CPM justification and confidence. Small table, so review it carefully. **Print and get your approval before freezing** |
-| 4.4 | `configs/emotion_taxonomy.yaml` | FACED 9→coarse 7, DREAMER 9→7, DEAP quadrants; fine labels retained |
-| 4.5 | FACED has per-category intensity ratings (verify). Optional train-only low-intensity filter (off by default; assert it can never touch val/test) | Only if the rating file has them |
-| 4.6 | `data/processed/<dataset>/targets.h5` aligned row-by-row with windows | |
-
-**Tests:** row alignment; label-distribution tables; sanity correlations (e.g. frontal asymmetry vs. valence on FACED, reported without claiming significance).
-
-**Gate 4:** Level 1 code identical across datasets; Level 3 table approved.
-
-### Phase 5: Models and training on FACED (Weeks 5-6)
-
-| Step | Task |
-|------|------|
-| 5.1 | `models/hcbm.py` – `HierarchicalCBM`: embedding → L1 head (hidden [256,128], out **37**) → L2 head (input = **only** L1 outputs; out 3) → L3 head (input = **only** L2 outputs; out 3) → emotion classifier (input = **only** L3 outputs; 7 classes). No residual path from embedding to later stages. A 3-d L3 bottleneck separating 7 classes is tight, so expect a hit and handle as in 5.3 |
-| 5.2 | `models/flat.py` – `FlatBaseline`: 2-layer MLP + GELU (hidden 128, dropout 0.1) → 7 classes. Report parameter counts of both |
-| 5.3 | Variant flags: `level1_only`, `level12`, `level123`, `bypass` (extra ablation); note that the pure L3→emotion chain is restrictive. If it hurts accuracy badly, document it and (only then) test the variant where emotion head also sees L2, as a labelled variant, not the main model |
-| 5.4 | `models/confidence.py`: sigmoid/softmax concept probabilities, temperature scaling and escalation threshold fit **on FACED validation only** |
-| 5.5 | `train/`: subject-wise 5-fold + fixed held-out test group; joint loss `w1·L1 + w2·L2 + w3·L3 + w4·L_emotion`; small documented hyperparameter search in `configs/model.yaml`; early stopping on validation; CSV logging |
-| 5.6 | **Concept leakage check**: the bottleneck must be the only path; also check L1 predictions are not trivially decoded without information (compare against a "shuffled targets" run) |
-
-**Tests:** subject disjointness across folds; **gradient-path test** proving the emotion loss reaches the embedding only through concept layers; overfit a tiny batch; results table (acc, macro-F1, concept accuracies; CBM vs. flat; mean ± std across folds).
-
-**Gate 5:** both models trained on identical splits; in-corpus table produced. (No DEAP/DREAMER touched.)
-
-### Phase 6: Simulation 1, cross-corpus generalisation (Week 7)
-
-Freeze all models, temperatures, thresholds. Evaluate **zero-shot, no fine-tuning** on DEAP and DREAMER 12ch embeddings.
-- Valence/arousal binary acc & macro-F1 on both; DEAP 4-quadrant acc.
-- Spearman/Pearson of predicted L2 vs. real ratings, bootstrap CI resampling subjects.
-- DREAMER 7-class accuracy labelled **secondary**.
-- CBM vs. flat, same layout, with paired bootstrap/permutation test.
-- Any few-shot calibration goes in a **separate** section, never mixed with zero-shot.
-
-**Output:** `reports/sim1.md` + CSV. A statement at the top lists every metric where the CBM is **not** better. Audit: no code path where DEAP/DREAMER labels reach training or threshold selection.
-
-### Phase 7: Ablation (Weeks 7-8)
-
-Evaluate `flat`, `level1_only`, `level12`, `level123` (+ `bypass` extra) on FACED in-corpus and DEAP/DREAMER cross-corpus with identical splits and seeds → one grouped bar chart + one table (`reports/sim_ablation.md`). Answers: which level contributes what.
-
-### Phase 8: Qwen explanation + FaithScore (Weeks 8-9, GPU stage)
-
-No local GPU, so heavy work is a notebook: `notebooks/kaggle_explain.ipynb` (run on Kaggle/Colab) plus a CPU fallback for 20 examples.
-
-| Step | Task |
-|------|------|
-| 8.1 | `explain/prompts.py`: serialise predicted L1 bins, L2 values, L3 values, emotion + confidence as structured text; instruct Qwen to use **only** supplied concepts and not invent EEG facts. Qwen2.5-1.5B/3B-Instruct, 4-bit if needed, temperature 0 / fixed seed |
-| 8.2 | Same explainer on the flat baseline's output (emotion + its continuous projection in same format without concept names), so human eval compares like with like |
-| 8.3 | **FaithScore**: on FACED test windows, flip predicted valence (pos↔neg), propagate through L3 and the emotion head, regenerate; auto-judge whether explanation changed correctly using (a) sentiment/NLI model on before/after text and (b) check that the explanation mentions the changed concept; store both signals separately; FaithScore = faithful changes ÷ total perturbations |
-| 8.4 | **Placebo control**: flip a concept that should not change valence wording (e.g. a Level 1 band bin) and report how often polarity changes anyway = metric false-positive rate |
-| 8.5 | Repeat on a DEAP subset and on a sample of the flat baseline |
-| 8.6 | Judge reliability: 20 hand-readable before/after pairs; you label manually; report judge agreement |
-
-**Output:** FaithScore table with CIs, placebo rate, 20 example pairs, judge reliability note. Note: the flat baseline has no concepts to flip, so define its perturbation (e.g. flip the emotion/projection summary) explicitly and describe the asymmetry as a limitation.
-
-### Phase 9: Human-in-the-loop experiments (Weeks 9-10)
-
-| Experiment | Spec |
-|-----------|------|
-| **Intervention curve** (`hitl/intervention.py`) | Replace 0%, 10%, … 100% of predicted concepts with ground truth; run per level (L1, L2, L3), random vs. uncertainty-ordered selection. DEAP/DREAMER use real V/A/D as the "expert" correcting L2. **L3 curve labelled "pseudo-expert"**. Plot mean + 95% CI across subjects |
-| **Escalation** (`hitl/escalation.py`) | Risk-coverage curve, AURC, accuracy at the pre-chosen threshold (from FACED validation), vs. random-escalation baseline; ECE before/after temperature scaling on FACED val, FACED test, DEAP, DREAMER |
-
-**Output:** figures + short markdown stating whether low-confidence cases really are the wrong ones, **including negative findings**.
-
-### Phase 10: Human evaluation (Weeks 10-12; start scheduling in Week 1)
-
-| Step | Task |
-|------|------|
-| 10.1 | `scripts/make_eval_set.py`: ~150 CBM-vs-flat explanation pairs, stratified by emotion class and correct/wrong prediction, mostly FACED test + a smaller DEAP share; randomise A/B with saved seed and **private key file**; scrub system-revealing text |
-| 10.2 | Rater interface (local HTML/Streamlit or Google Form export): 1-5 scales for faithfulness, plausibility, clarity, actionability + free text; ground-truth label hidden unless protocol says otherwise |
-| 10.3 | `docs/EVAL_PROTOCOL.md`: evaluator instructions, criterion definitions, ethics note, consent text (get institutional ethics sign-off if required **before** recruiting) |
-| 10.4 | Pilot with 2-3 pairs; fix wording |
-| 10.5 | Collect ratings from ≥3 evaluators |
-| 10.6 | `scripts/analyse_ratings.py`: unblind, per-criterion means + bootstrap CI, Wilcoxon signed-rank + effect size, Fleiss' kappa / Krippendorff's alpha, split by correct vs. wrong predictions, FDR correction |
-
-**Tests:** dry run with synthetic ratings from 3 fake raters produces the full report; unblinding confirms A/B balance.
-
-### Phase 11: Writing and deck update (Week 12)
-
-- `docs/PAPER_DRAFT.md`: abstract, method, datasets + taxonomy, protocol, all results with CIs, limitations, and a statement of which expected results the data did not support. **Only numbers from `reports/` files.**
-- Deck edits: slide 3 (SEED-VII → FACED stats (123 subjects, 28 clips, 32 ch, about 24,100 windows, 9 categories → coarse 7, surprise removed); DEAP/DREAMER as cross-corpus test sets; note L2 = real self-ratings, L3 = pseudo-labels); slide 3 footer (delete "Same dataset as E²-LLM…", replace with "flat baseline re-implemented on identical embeddings and splits"); slide 5 (evaluation-data row; Cohen's kappa → Fleiss' kappa/Krippendorff's alpha; remove E²-LLM numerical comparison claims); update slide 6 contributions with measured numbers.
-
-**Gate 11:** every slide claim backed by a saved result.
+T7/T8 are the loosest (EGI's own 10-20 tables often give E45/E108); confirm against EGI's equivalence chart on Day 1 and
+freeze in `configs/protocol.yaml` before any embedding. Epoch rows are E1..E128 (Cz reference not included).
 
 ---
 
-## 6. Proposed Repository Additions
+## 4. What already exists (reused unchanged or with small edits)
 
-```
-configs/        emotion_taxonomy.yaml, appraisal_profiles.yaml, channel_map_faced.yaml
-docs/           EEGPT_REQUIREMENTS.md, EVAL_PROTOCOL.md, PAPER_DRAFT.md
-scripts/        inspect_{faced,deap,dreamer}.py, qc_cross_dataset.py, extract_embeddings.py,
-                probe.py, make_eval_set.py, analyse_ratings.py, run_all.sh
-src/hcbm/       io/{faced,deap,dreamer,schema}.py, preprocess/pipeline.py,
-                concepts/level{1,2,3}.py, models/{eegpt_encoder,hcbm,flat,confidence}.py,
-                train/, eval/, explain/, hitl/{intervention,escalation}.py
-notebooks/      kaggle_explain.ipynb
-reports/        faced_inspection.md, qc.md, sim1.md, sim_ablation.md, faithscore.md, hitl.md, human_eval.md
-```
+Built and tested in rev 2 (32 tests pass; full run verified on placeholder embeddings 19 Oct; real EEGPT checkpoint
+strict-loads, sha256 `9d63ebc8...`, at `checkpoints/EEGPT/checkpoint/eegpt_mcae_58chs_4s_large4E.ckpt`):
 
-`make` targets already exist (`setup test preprocess embed train eval`); add `qc`, `explain`, `hitl`, `humaneval`.
-
----
-
-## 7. Risks and Mitigations
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|-----------|
-| **FACED metadata missing** (channel names, clip labels, ratings are not in the pickles) | Confirmed | High: cannot build any label or channel map | Phase 0.5: fetch from the FACED release before anything else |
-| EEGPT embeddings from 12 channels carry little signal | Medium | Critical | Gate 3 probe; check scaling/vocab; try full montage; consider an alternative encoder only as documented deviation |
-| Strict L1→L2→L3→emotion chain lowers accuracy | Medium | Medium | Report honestly; test emotion-head-sees-L2 as labelled variant; H1 is non-inferiority, not superiority |
-| Cross-corpus shift (FACED: Neuroscan-style 32-ch lab recording of Chinese-subject film clips vs. DEAP music videos vs. DREAMER Emotiv; 32/32/14 ch → 12) | High | Medium | Domain-shift check in QC; per-subject z-score; Spearman reporting; discuss as limitation |
-| Clip identity shared across subjects (same 28 clips), windows within a clip are highly correlated | High | Medium | Subject-wise splits plus clip-held-out secondary check; never split a clip's windows across folds |
-| Level 3 has no real labels | Certain | Medium | Pseudo-labels labelled as such everywhere; "pseudo-expert" intervention curve; limitation in paper |
-| FaithScore judge itself unreliable / flat baseline has no concepts to perturb | Medium | Medium | Two separate signals, placebo control, 20 manual labels, document asymmetry |
-| Qwen hallucination despite prompt | Medium | Medium | Constrained prompt, deterministic decoding, post-hoc check that only supplied concepts are mentioned |
-| Evaluator recruitment/ethics delay | High | High (blocks Phase 10) | Start Week 1; pilot early; need ≥3 raters |
-| No local GPU | Certain | Low | Embeddings on CPU (once, cached); Qwen stage in Kaggle/Colab notebook with 20-example CPU fallback |
-| Test leakage (tuning on DEAP/DREAMER) | Low if rules held | Critical | Hard rule 4; code audit; assert in tests |
-| DREAMER's 7-class mapping is loose | Certain | Low | Secondary result only |
+| Component | File(s) | Rev 3 change |
+|---|---|---|
+| Preprocessing functions, HDF5 schema | `preprocess/pipeline.py`, `io/schema.py` | none |
+| DEAP / DREAMER windows | `data/processed/{deap,dreamer}/windows_12ch.h5` | none |
+| EEGPT encoder + extraction (resumable, GPU) | `models/eegpt_encoder.py`, `scripts/extract_embeddings.py`, `scripts/select_scale.py` | primary dataset from config |
+| Concepts L1/L2/L3 + targets | `concepts/level{1,2,3}.py`, `scripts/build_targets.py` | DENS branch; gamma 30-40 |
+| CBM (5 variants), flat, temperature/escalation | `models/{hcbm,flat,confidence}.py` | `n_classes` 6 |
+| Training, 5-fold CV, hyperparameter grid | `train/{trainer,data,runs,splits}.py`, `scripts/train.py` | primary dataset from config |
+| In-corpus / Sim 1 / ablation reports | `scripts/evaluate.py` | dataset names from config |
+| HITL (interventions, escalation) | `hitl/intervention.py`, `scripts/hitl.py` | dataset names from config |
+| Qwen explainer, FaithScore, placebo | `explain/{prompts,generator}.py`, `scripts/explain.py` | dataset names; class list |
+| Human eval set, offline rater form, analysis | `scripts/{make_eval_set,analyse_ratings,faithscore_agreement}.py` | none |
+| One-command run | `scripts/run_all.sh` (`PY=.venv-gpu/bin/python`, `DEVICE=cuda`) | none |
 
 ---
 
-## 8. Milestones and Deliverables
+## 5. Three-day implementation plan
 
-| Week | Milestone | Deliverable |
-|------|-----------|-------------|
-| 1 | Access + setup | Env, EEGPT weights, FACED metadata, evaluators recruited |
-| 2 | Inspection | `reports/faced_inspection.md` |
-| 3 | Preprocessing | 3× `windows_12ch.h5`, `qc.md` |
-| 4 | Embeddings + targets | `data/embeddings/*`, `targets.h5`, probe result |
-| 6 | Models | In-corpus CBM vs. flat table |
-| 7 | Sim 1 | `reports/sim1.md` |
-| 8 | Ablation | `reports/sim_ablation.md` |
-| 9 | FaithScore | `reports/faithscore.md`, 20 examples |
-| 10 | HITL | `reports/hitl.md` |
-| 12 | Human eval + paper | `human_eval.md`, `PAPER_DRAFT.md`, updated deck |
+Every day ends with `pytest` green and the day's reports regenerated. Run tag: `dens12` (real EEGPT).
 
-## 9. Reproducibility Checklist
+### Day 1 (21 Oct): DENS data in, pipeline re-pointed
+| # | Task | Output |
+|---|---|---|
+| 1.1 | Freeze configs: `protocol.yaml` (`primary_dataset: dens`, `dens:` paths + EGI channel map + epoch params, gamma 30-40, DENS thresholds), `emotion_taxonomy.yaml` (6 classes, DENS groups, DREAMER map), `appraisal_profiles.yaml` (`dens` section), `model.yaml` (`n_classes: 6`) | configs committed **before** any embedding |
+| 1.2 | `src/hcbm/io/dens.py` + `scripts/build_dens.py`: parse filenames, join ratings, select 12 ch, preprocess (3), cut 4 windows/epoch; labels: group, coarse, valence/arousal/dominance/liking raw, epoch_id | `data/processed/dens/windows_12ch.h5` (~1,900 x 12 x 1024) |
+| 1.3 | `scripts/make_splits.py dens` | `data/processed/dens/splits.json` (8 test subjects + 5 folds) |
+| 1.4 | Remove FACED hard-coding: scripts read `primary_dataset` / `cross_corpus_datasets` from config; FACED-only rules (D11 rater mask) apply only when present | same scripts, dataset-agnostic |
+| 1.5 | `build_targets.py` for dens/deap/dreamer (gamma 30-40; DREAMER 6-class) | `targets.h5` x 3 |
+| 1.6 | QC: extend `qc_cross_dataset.py` to DENS (spectra, rejection, label counts, domain-shift check) | `reports/qc.md` |
+| 1.7 | Tests: DENS schema/counts, epoch-not-split-across-folds, rating join, 6-class taxonomy | `tests/test_dens.py` |
+| 1.8 | EEGPT: `select_scale.py` on DENS train/val subjects, then embeddings for dens/deap/dreamer on GPU (~minutes) + Gate-3 probe | `data/embeddings/*_dens12.h5`, `reports/probe_*.json` |
 
-- [ ] Single command regenerates every table from saved prediction files
-- [ ] Seeds, config hashes, EEGPT checkpoint hash, git commit stored with each result
-- [ ] Subject-disjointness asserted in tests; no DEAP/DREAMER label reaches training/threshold code
+**Gate 1:** DENS file validates; splits disjoint; probe runs (beating chance is reported, not required, in rev 3).
+
+### Day 2 (22 Oct): models, simulations, explanations
+| # | Task | Output |
+|---|---|---|
+| 2.1 | `train.py --tag dens12 --search`: flat + level1_only / level12 / level123 / level123_l2 / bypass, 5 folds | `runs/dens12/` |
+| 2.2 | `evaluate.py`: in-corpus DENS (acc, macro-F1, concept accuracy), **Sim 1** zero-shot DEAP/DREAMER (V/A binary, Spearman, DEAP quadrants, DREAMER 6-class), **Sim 3** ablation | `reports/dens12/{in_corpus,sim1,sim_ablation}.md` |
+| 2.3 | `hitl.py`: intervention curves (L1, L2 real, L3 pseudo-expert), escalation (risk-coverage, AURC, ECE) | `reports/dens12/hitl.md` |
+| 2.4 | `explain.py --backend qwen --device cuda --n 120 --n-deap 30`: **Sim 2** FaithScore + placebo, both judges | `reports/dens12/faithscore.md`, `explanations.jsonl` |
+| 2.5 | Label 20 FaithScore pairs by hand (you), `faithscore_agreement.py` | judge reliability |
+
+**Gate 2:** all reports generated; leakage audit (no DEAP/DREAMER label in any training/threshold path) passes.
+
+### Day 3 (23 Oct): human evaluation materials, write-up, buffer
+| # | Task | Output |
+|---|---|---|
+| 3.1 | `make_eval_set.py` (~150 blinded pairs), pilot the rater form on 2-3 items, fix wording | `reports/dens12/human_eval/` |
+| 3.2 | `analyse_ratings.py --synthetic` dry run (real ratings come when raters return them) | `human_eval_DRYRUN.md` |
+| 3.3 | Results summary: every number from `reports/`, list of hypotheses not supported | `docs/RESULTS_SUMMARY.md` |
+| 3.4 | Deck updates (section 8) | updated slides |
+| 3.5 | Buffer: fix whatever broke; optional FACED as second training corpus or DENS raw clips | |
+
+---
+
+## 6. Experiments and metrics
+
+| Experiment | Data | Metrics |
+|---|---|---|
+| In-corpus | DENS test subjects (8) | accuracy, macro-F1 (6 classes), L1 Pearson r, L2 binary acc (V/A/D), L3 MAE; fold mean +- std and 5-fold ensemble with subject-bootstrap CI |
+| **Sim 1** cross-corpus | DEAP, DREAMER (zero-shot, frozen) | V/A binary acc + macro-F1 (L2 head and via emotion head for both models), Spearman vs ratings, DEAP 4-quadrant acc, DREAMER 6-class acc (secondary), dominance Spearman (now trained on real DENS dominance), paired bootstrap CBM vs flat |
+| **Sim 2** FaithScore | DENS test + DEAP subset | valence flip propagated through L3 and emotion head; judge (a) sentiment classifier, (b) valence-term check; placebo L1 text flip; flat baseline flips the class summary (asymmetry stated) |
+| **Sim 3** ablation | all | flat vs level1_only vs level12 vs level123 (+ labelled variants level123_l2, bypass) |
+| HITL | DENS test (+ DREAMER) | intervention curves random vs uncertainty-ordered; risk-coverage, AURC vs random, error escalated vs retained, ECE before/after temperature scaling |
+| Human eval | ~150 pairs, >= 3 raters | 1-5 faithfulness, plausibility, clarity, actionability; Wilcoxon, effect size, FDR; Fleiss' kappa, Krippendorff's alpha; split by correct/wrong |
+
+---
+
+## 7. Risks
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| 475 epochs / 40 subjects is small, classes uneven (50-130 epochs) | wide CIs, unstable CBM | macro-F1, class weights, CIs, honest reporting; results are not the 3-day goal |
+| DENS epochs are pre-filtered by the authors (1-40 Hz, undocumented `-slor`) | preprocessing mismatch vs DEAP/DREAMER | gamma narrowed to 30-40 everywhere; domain-shift check in QC; stated as limitation |
+| Click-localised 7 s labels (DENS) vs whole-trial ratings (DEAP/DREAMER) | label-granularity shift in Sim 1 | report as a limitation; Spearman alongside binary metrics |
+| EGI -> 10-10 mapping approximate (T7/T8 ~7°) | channel mismatch | confirm on Day 1; list mapping in paper |
+| 3-d L3 bottleneck for 6 classes is tight | accuracy loss | expected; labelled `level123_l2` variant |
+| Qwen 1.5B ignores the facts (seen 19 Oct: wrote "positive" for a negative valence) | low FaithScore | this is what Sim 2 measures; try 3B on GPU if time |
+| Raters / ethics not arranged | human eval cannot run in 3 days | deliver form + protocol + dry-run analysis; collect later |
+| Overlapping windows inflate apparent sample size | optimistic CIs | bootstrap resamples subjects, never windows |
+
+---
+
+## 8. Deck updates needed
+
+- **Slide 3:** SEED-VII -> **DENS**: 40 subjects, 128-ch EGI (12 shared channels used), 475 click-localised emotion events,
+  ~1,900 4 s windows, 6 emotion classes; DEAP = cross-corpus test, DREAMER = cross-corpus test (additional validation).
+  Delete "Same dataset as E²-LLM, so the baseline comparison is fair" -> "Flat baseline re-implemented on identical
+  embeddings and splits."
+- **Slide 3/5:** "7 emotion classes" -> 6 (no neutral); Simulation 1 "Train on DENS, test on DEAP / DREAMER".
+- **Slide 5:** Cohen's kappa -> Fleiss' kappa / Krippendorff's alpha; evaluation data DENS -> DEAP / DREAMER; remove
+  numerical E²-LLM comparisons.
+- **Slide 4:** Level 3 values are category pseudo-labels (say so).
+
+---
+
+## 9. Reproducibility checklist
+- [ ] `scripts/run_all.sh` regenerates every report from processed data
+- [ ] Seeds, config hashes, EEGPT checkpoint sha256, git commit stored with each run (`runs/<tag>/manifest.json`)
+- [ ] Subject disjointness and epoch-not-split asserted in tests; no DEAP/DREAMER label reaches training/threshold code
 - [ ] Every number in the paper/deck traceable to `reports/`
 - [ ] Negative results reported
-- [ ] Raw data untouched; derived data regenerable via `make preprocess embed`
 
-## 10. Immediate Next Actions (this week)
-
-1. Fetch FACED metadata (channel list, clip→category table, ratings) and decide the dominance handling.
-2. Obtain the EEGPT checkpoint and put its path in `configs/paths.yaml`.
-3. Message ≥3 prospective evaluators; check whether ethics approval is needed.
-4. Fix `.gitignore` for `datasets/` and large artifacts.
-5. Start Phase 1: write `scripts/inspect_faced.py` and answer items a-h.
+## 10. Open items for you
+1. Approve the Level-3 appraisal profiles for the 6 classes (`configs/appraisal_profiles.yaml`, `dens` section, Day 1).
+2. Confirm the 6-class mapping in 3.1 (especially G3 -> surprise, G7 -> sadness).
+3. Raters (>= 3) and whether ethics approval is needed.
+4. Whether FACED returns as a second training corpus after Day 3.

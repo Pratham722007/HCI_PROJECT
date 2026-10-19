@@ -1,9 +1,10 @@
-"""Phases 5-7 reports from saved predictions: in-corpus FACED, Sim 1 (zero-shot DEAP/DREAMER), ablation.
+"""Phases 5-7 reports from saved predictions: in-corpus (primary dataset, rev 3 = DENS), Sim 1 (zero-shot DEAP/DREAMER),
+ablation.
 
-Run: .venv/bin/python -E -P scripts/evaluate.py --tag 12ch   -> reports/<tag>/{in_corpus,sim1,sim_ablation}.md + .csv
+Run: .venv/bin/python -E -P scripts/evaluate.py --tag dens12   -> reports/<tag>/{in_corpus,sim1,sim_ablation}.md + .csv
 Main numbers use the 5-fold ensemble (mean of fold-model outputs) with subject-bootstrap 95% CIs; fold mean +- std
 is given alongside. Nothing here selects anything: all thresholds were fixed before (0.5 on the 0-1 rating scale).
-V/A from the emotion head ("via emotion") = class probabilities x per-class mean FACED-train valence/arousal, so the
+V/A from the emotion head ("via emotion") = class probabilities x per-class mean train-subject valence/arousal, so the
 flat baseline gets V/A predictions in the same way as the CBM.
 """
 import argparse, csv, json, os, sys
@@ -14,19 +15,20 @@ from hcbm.train import data as tdata, runs  # noqa: E402
 from hcbm.eval import metrics as M  # noqa: E402
 from hcbm.models.confidence import softmax  # noqa: E402
 
-ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="12ch"); ap.add_argument("--n-boot", type=int, default=1000)
+ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="dens12"); ap.add_argument("--n-boot", type=int, default=1000)
 a = ap.parse_args()
 man = runs.manifest(ROOT, a.tag)
 out_dir = os.path.join(ROOT, "reports", a.tag); os.makedirs(out_dir, exist_ok=True)
-sp = json.load(open(os.path.join(ROOT, "data/processed/faced/splits.json")))
-D = {ds: tdata.load(ROOT, ds, a.tag) for ds in ["faced"] + man.get("cross_corpus", [])}
-F = D["faced"]
+PRIMARY = man.get("primary", "faced"); NAME = PRIMARY.upper()
+sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json")))
+D = {ds: tdata.load(ROOT, ds, a.tag) for ds in [PRIMARY] + man.get("cross_corpus", [])}
+F = D[PRIMARY]
 COARSE = F["meta"]["coarse_classes"]
 variants = [v for v in runs.ALL_VARIANTS if runs.load_preds(ROOT, a.tag, v)]
 P = {v: runs.load_preds(ROOT, a.tag, v) for v in variants}
-L7 = list(range(len(COARSE)))
+LC = list(range(len(COARSE)))
 train_rows = np.flatnonzero(~F["reject"] & ~np.isin(F["subject"], sp["test"]))
-proto = np.stack([np.nanmean(F["l2"][train_rows][F["emotion"][train_rows] == c, :2], 0) for c in L7])   # (7, 2) V/A
+proto = np.stack([np.nanmean(F["l2"][train_rows][F["emotion"][train_rows] == c, :2], 0) for c in LC])   # (classes, 2) V/A
 bad_raters = set(man.get("unreliable_raters") or [])
 
 
@@ -59,43 +61,45 @@ def fold_stat(v, ds, fn):
 rows_csv = []
 banner = runs.placeholder_banner(man)
 
-# ---------------- in-corpus FACED (Gate 5) ----------------
-tr = P[variants[0]][0]["faced_test"]["rows"]
+# ---------------- in-corpus (Gate 5) ----------------
+tr = P[variants[0]][0]["test"]["rows"]
 yt, st = F["emotion"][tr], F["subject"][tr]
-lines = [f"# In-corpus FACED results (tag `{a.tag}`)\n", banner,
-         f"Held-out test group: {len(set(st))} subjects, {len(tr)} non-rejected windows. 7-class coarse emotion. "
+lines = [f"# In-corpus {NAME} results (tag `{a.tag}`)\n", banner,
+         f"Held-out test group: {len(set(st))} subjects, {len(tr)} non-rejected windows. {len(COARSE)}-class coarse emotion ({', '.join(COARSE)}). "
          "Ensemble = mean of the 5 fold models' probabilities; CI = subject bootstrap.\n",
          "| model | test acc (ensemble, 95% CI) | test macro-F1 (ensemble, 95% CI) | test macro-F1 (fold mean +- std) | CV val macro-F1 | params |",
          "|---|---|---|---|---|---|"]
 for v in variants:
-    pr = probs(v, "faced_test").argmax(1)
+    pr = probs(v, "test").argmax(1)
     s = json.load(open(os.path.join(runs.run_dir(ROOT, a.tag, v), "summary.json")))
     cv = np.mean([f["val_macro_f1"] for f in s["folds"]])
-    r_acc, r_f1 = boot(M.acc, st, yt, pr), boot(lambda y, p: M.macro_f1(y, p, L7), st, yt, pr)
-    lines.append(f"| {v} | {fmt(r_acc)} | {fmt(r_f1)} | {fold_stat(v, 'faced_test', lambda d: M.macro_f1(yt, d['logits'].argmax(1), L7))} | {cv:.3f} | {s['n_params']:,} |")
-    rows_csv.append(dict(section="in_corpus", model=v, dataset="faced_test", metric="macro_f1", **r_f1))
-    rows_csv.append(dict(section="in_corpus", model=v, dataset="faced_test", metric="acc", **r_acc))
-lines.append(f"\nChance macro-F1 ~ {1 / len(L7):.3f}; majority-class accuracy {np.bincount(yt).max() / len(yt):.3f}.\n")
+    r_acc, r_f1 = boot(M.acc, st, yt, pr), boot(lambda y, p: M.macro_f1(y, p, LC), st, yt, pr)
+    lines.append(f"| {v} | {fmt(r_acc)} | {fmt(r_f1)} | {fold_stat(v, 'test', lambda d: M.macro_f1(yt, d['logits'].argmax(1), LC))} | {cv:.3f} | {s['n_params']:,} |")
+    rows_csv.append(dict(section="in_corpus", model=v, dataset="test", metric="macro_f1", **r_f1))
+    rows_csv.append(dict(section="in_corpus", model=v, dataset="test", metric="acc", **r_acc))
+lines.append(f"\nChance macro-F1 ~ {1 / len(LC):.3f}; majority-class accuracy {np.bincount(yt).max() / len(yt):.3f}.\n")
 if "flat" in variants and "level123" in variants:
-    d = M.paired_bootstrap(lambda y, p: M.macro_f1(y, p, L7), st, yt, probs("level123", "faced_test").argmax(1), probs("flat", "faced_test").argmax(1))
+    d = M.paired_bootstrap(lambda y, p: M.macro_f1(y, p, LC), st, yt, probs("level123", "test").argmax(1), probs("flat", "test").argmax(1))
     lines.append(f"**H1 (non-inferiority, +-2 pp):** CBM(level123) - flat macro-F1 = {d['diff']:+.3f} [{d['lo']:+.3f}, {d['hi']:+.3f}], p = {d['p']:.3f}. "
                  f"{'Non-inferior (CI lower bound > -0.02).' if d['lo'] > -0.02 else 'Non-inferiority NOT shown (CI lower bound <= -0.02).'}\n")
 
-lines += ["## Concept accuracy on FACED test (CBM variants, ensemble)\n",
-          "| model | L1 mean Pearson r (37 concepts) | L2 valence bin acc | L2 arousal bin acc | L2 valence acc, reliable raters only | L3 MAE (pseudo) |", "|---|---|---|---|---|---|"]
+lines += [f"## Concept accuracy on {NAME} test (CBM variants, ensemble)\n",
+          "| model | L1 mean Pearson r (37 concepts) | L2 valence bin acc | L2 arousal bin acc | L2 dominance bin acc | L2 valence acc, reliable raters only | L3 MAE (pseudo) |", "|---|---|---|---|---|---|---|"]
 rel = ~np.isin(st, list(bad_raters))
 for v in variants:
     if v == "flat":
         continue
-    l1, l2, l3 = (ensemble(v, "faced_test", k) for k in ("l1", "l2", "l3"))
+    l1, l2, l3 = (ensemble(v, "test", k) for k in ("l1", "l2", "l3"))
     r1 = np.nanmean([M.corr(l1[:, j], F["l1"][tr, j])["pearson"] for j in range(l1.shape[1])])
     va = []
-    for d_ in (0, 1):
-        m, y, p = binary(F["l2"][tr, d_], l2[:, d_]); va.append(M.acc(y[m], p[m]))
+    for d_ in (0, 1, 2):
+        m, y, p = binary(F["l2"][tr, d_], l2[:, d_]); m &= F["l2_mask"][tr, d_]
+        va.append(M.acc(y[m], p[m]) if m.any() else float("nan"))
     m, y, p = binary(F["l2"][tr, 0], l2[:, 0]); m = m & rel
-    lines.append(f"| {v} | {r1:.3f} | {va[0]:.3f} | {va[1]:.3f} | {M.acc(y[m], p[m]):.3f} | {np.nanmean(np.abs(l3 - F['l3'][tr])):.3f} |")
-lines.append(f"\nUnreliable raters in the test group (D11, V/A loss masked in training; included above unless stated): "
-             f"{sorted(bad_raters & set(sp['test'])) or 'none'}.\n")
+    lines.append(f"| {v} | {r1:.3f} | {va[0]:.3f} | {va[1]:.3f} | {va[2]:.3f} | {M.acc(y[m], p[m]):.3f} | {np.nanmean(np.abs(l3 - F['l3'][tr])):.3f} |")
+lines.append(f"\nUnreliable raters in the test group (D11, FACED only; V/A loss masked in training; included above unless stated): "
+             f"{sorted(bad_raters & set(sp['test'])) or 'none'}. Dominance: "
+             f"{'FACED pseudo-label (D3)' if PRIMARY == 'faced' else 'real self-rating'}.\n")
 open(os.path.join(out_dir, "in_corpus.md"), "w").write("\n".join(lines))
 
 # ---------------- Sim 1: zero-shot cross-corpus ----------------
@@ -138,7 +142,7 @@ for ds in man.get("cross_corpus", []):
             sim.append(f"| {v} | {name} | {fmt(boot(M.acc, subj[m], q[m], qp[m]))} |")
     if ds == "dreamer":
         m = ok & (X["emotion"] >= 0)
-        sim += ["\nDREAMER coarse-emotion accuracy (**secondary**, loose 9->7 mapping, surprise clips excluded):\n",
+        sim += [f"\nDREAMER coarse-emotion accuracy (**secondary**, clip-level target emotion -> {len(COARSE)} classes, unmapped clips excluded):\n",
                 "| model | acc [95% CI] | macro-F1 |", "|---|---|---|"]
         for v in variants:
             p = probs(v, ds).argmax(1)
@@ -156,10 +160,11 @@ for ds in man.get("cross_corpus", []):
                     notbetter.append(f"{ds} {'valence' if d_ == 0 else 'arousal'} accuracy (CBM {name}: {r['diff']:+.3f}, CI [{r['lo']:+.3f}, {r['hi']:+.3f}])")
     if (D[ds]["l2_mask"][:, 2]).any() and "level123" in variants:
         r = boot(M.spearman, subj[ok], X["l2"][ok, 2], ensemble("level123", ds, "l2")[ok, 2])
-        sim.append(f"\nExploratory (D3): predicted dominance (trained on FACED pseudo-labels) vs real {ds.upper()} dominance, Spearman {fmt(r)}.\n")
+        sim.append(f"\nPredicted dominance (trained on {'FACED pseudo-labels, exploratory (D3)' if PRIMARY == 'faced' else NAME + ' self-ratings'}) "
+                   f"vs real {ds.upper()} dominance, Spearman {fmt(r)}.\n")
 
 head = [f"# Simulation 1: zero-shot cross-corpus generalisation (tag `{a.tag}`)\n", banner,
-        "Models trained on FACED only; temperature/thresholds frozen; no DEAP/DREAMER data used for any choice. "
+        f"Models trained on {NAME} only; temperature/thresholds frozen; no DEAP/DREAMER data used for any choice. "
         "Binary threshold = scale midpoint (0.5 after rescaling), ties dropped. CIs resample subjects.\n",
         "**Metrics where the CBM is NOT significantly better than the flat baseline (H2):** " +
         ("; ".join(notbetter) if notbetter else "none") + "\n"]
@@ -167,12 +172,12 @@ open(os.path.join(out_dir, "sim1.md"), "w").write("\n".join(head + sim))
 
 # ---------------- ablation ----------------
 ab = [f"# Ablation (tag `{a.tag}`)\n", banner,
-      "Same splits/seed/hyperparameters for every variant. FACED = test macro-F1 (ensemble). Cross-corpus = valence/arousal "
+      f"Same splits/seed/hyperparameters for every variant. {NAME} = test macro-F1 (ensemble). Cross-corpus = valence/arousal "
       "accuracy via the emotion head (comparable across all variants, incl. flat).\n",
-      "| variant | FACED test macro-F1 | " + " | ".join(f"{ds} V acc | {ds} A acc" for ds in man.get("cross_corpus", [])) + " |",
+      f"| variant | {NAME} test macro-F1 | " + " | ".join(f"{ds} V acc | {ds} A acc" for ds in man.get("cross_corpus", [])) + " |",
       "|---|---|" + "---|---|" * len(man.get("cross_corpus", []))]
 for v in variants:
-    cells = [f"{M.macro_f1(yt, probs(v, 'faced_test').argmax(1), L7):.3f}"]
+    cells = [f"{M.macro_f1(yt, probs(v, 'test').argmax(1), LC):.3f}"]
     for ds in man.get("cross_corpus", []):
         X, ok = cross_rows(ds); pv = probs(v, ds) @ proto
         for d_ in (0, 1):

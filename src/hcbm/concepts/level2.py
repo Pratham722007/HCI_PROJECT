@@ -1,11 +1,11 @@
-"""Level 2 affective concepts: valence, arousal (real self-ratings), dominance (real on DEAP/DREAMER, pseudo on FACED).
+"""Level 2 affective concepts: valence, arousal (real self-ratings), dominance (real on DENS/DEAP/DREAMER, pseudo on FACED).
 
 All three are rescaled to 0-1 per dataset so 0.5 is the locked binarisation midpoint on every corpus
-(FACED 3.5/7, DEAP 5 on 1-9, DREAMER 3 on 1-5; D4).
+(FACED 3.5/7, DENS and DEAP 5 on 1-9, DREAMER 3 on 1-5; D4).
 """
 import numpy as np
 
-SCALES = {"faced": (0.0, 7.0), "deap": (1.0, 9.0), "dreamer": (1.0, 5.0)}
+SCALES = {"faced": (0.0, 7.0), "dens": (1.0, 9.0), "deap": (1.0, 9.0), "dreamer": (1.0, 5.0)}
 DIMS = ("valence", "arousal", "dominance")
 
 

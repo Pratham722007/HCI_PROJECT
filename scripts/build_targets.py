@@ -1,8 +1,10 @@
 """Phase 4.6: concept targets -> data/processed/<dataset>/targets.h5, row-aligned with windows_12ch.h5.
 
-Run: .venv/bin/python -E -P scripts/build_targets.py [faced deap dreamer]
+Run: .venv/bin/python -E -P scripts/build_targets.py [dens deap dreamer]   (default: primary + cross-corpus datasets)
 Contents: l1_raw/l1_z/l1_bins (n,37), l2 (n,3) 0-1 + l2_mask, l3 (n,3) pseudo (NaN where undefined), emotion (n,) coarse
 (-1 = no coarse label), and for FACED fine, rater_r and l2_train_mask (D11: V/A loss masked for unreliable raters).
+Rev 3: DENS gets real V/A/D and L3 from its coarse class; DREAMER gets L3 pseudo-labels from its clip class (same 6
+classes, `dens` section of appraisal_profiles.yaml); DEAP has no class, so no L3.
 """
 import json, os, sys
 import h5py, numpy as np
@@ -50,12 +52,15 @@ def build(name):
         out.update(rater_r=rr, l2_train_mask=tm)
         bad = sorted(s for s, v in r.items() if v < RATER_MIN_R)
         extra = dict(unreliable_raters=bad, unreliable_in_test=sorted(set(bad) & set(sp["test"])),
-                     rater_min_r=RATER_MIN_R, dominance="pseudo_category_prototype", appraisal_status=prof["status"])
+                     rater_min_r=RATER_MIN_R, dominance="pseudo_category_prototype", appraisal_status=prof["status"],
+                     coarse_classes=json.loads(h5py.File(src, "r").attrs["meta"])["coarse_classes"])   # FACED keeps its rev-2 7 classes
         print(f"faced: {len(bad)} unreliable raters (r<{RATER_MIN_R}):", bad)
     else:
         l2, m2 = level2.build_level2(name, lab)
-        emo = dreamer_coarse(trial) if name == "dreamer" else np.full(len(sub), -1)
-        out.update(l3=np.full((len(sub), 3), np.nan), emotion=emo)
+        emo = dict(dens=lambda: lab["coarse"], dreamer=lambda: dreamer_coarse(trial)).get(name, lambda: np.full(len(sub), -1))()
+        table, _ = level3.profile_table(prof, COARSE, section="dens")
+        out.update(l3=level3.build_level3(emo, table), emotion=emo)
+        extra = dict(appraisal_status=prof["status"], dominance="real self-rating")
     out.update(l2=l2, l2_mask=m2)
     dst = os.path.join(ROOT, f"data/processed/{name}/targets.h5")
     with h5py.File(dst, "w") as g:
@@ -65,9 +70,9 @@ def build(name):
             g.create_dataset(k, data=v)
         g.attrs["concept_names"] = json.dumps(level1.concept_names(ch))
         g.attrs["meta"] = json.dumps(dict(dataset=name, l2_dims=list(level2.DIMS), l3_dims=list(level3.DIMS),
-                                          coarse_classes=COARSE, src=os.path.relpath(src, ROOT), **extra))
+                                          **{"coarse_classes": COARSE, **extra}, src=os.path.relpath(src, ROOT)))
     print("saved", dst, {k: v.shape for k, v in out.items()})
 
 
-for name in sys.argv[1:] or ["faced", "deap", "dreamer"]:
+for name in sys.argv[1:] or [cfg["primary_dataset"]] + cfg["cross_corpus_datasets"]:
     build(name)

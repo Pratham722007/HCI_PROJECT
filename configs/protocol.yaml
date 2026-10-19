@@ -29,7 +29,7 @@ filtering:
 band_edges:
   theta: [4.0, 8.0]
   alpha: [8.0, 13.0]
-  gamma: [30.0, 45.0]
+  gamma: [30.0, 40.0]   # rev 3 (D16): DENS epochs are low-passed at 40 Hz; same edges on every dataset
 
 # Level 1 Frontal Alpha Asymmetry (FAA) electrode pair definition
 faa_channels:
@@ -47,6 +47,10 @@ rating_thresholds:
     valence: 5.0
     arousal: 5.0
     dominance: 5.0
+  dens:
+    valence: 5.0   # 1-9 (continuous), midpoint 5, exact ties dropped
+    arousal: 5.0
+    dominance: 5.0
   dreamer:
     valence: 3.0   # integer 1-5; ~22-29% of ratings tie at 3 -> ties dropped for binary metrics
     arousal: 3.0
@@ -62,7 +66,7 @@ split_seeds:
   held_out_test_ratio: 0.20
 
 # ---- Rev 2 decisions (16 Oct 2026, made before any training) ----
-primary_dataset: "faced"
+primary_dataset: "dens"                       # rev 3 (20 Oct 2026): DENS trains; FACED deferred (rev 2 used "faced")
 cross_corpus_datasets: ["deap", "dreamer"]   # frozen, zero-shot, never used for tuning
 faced:
   fs_native: 250
@@ -106,3 +110,14 @@ preprocessing:
 # (window kept for every other loss). Evaluation always uses all test subjects; flagged test subjects listed in reports.
 rater_reliability:
   min_r: 0.5
+
+# ---- Rev 3: DENS (20 Oct 2026, before any DENS embedding/training) ----
+dens:
+  source: "click-locked group-wise epochs (old release), all 40 subjects"   # research-plan.md 2.1
+  fs_native: 250
+  epoch_samples: 1751          # 7 s @ 250 Hz, authors' preprocessing (1-40 Hz)
+  window_stride_sec: 1.0       # 4 s windows every 1 s -> 4 overlapping windows per epoch (never split across folds)
+  windows_per_epoch: 4
+  # EGI HydroCel-128 electrode (1-based E-number) for each shared channel: nearest by angle after centring the MNE
+  # GSN-HydroCel-129 and standard_1005 montages (research-plan.md 3.2). T7/T8 are ~7 deg off (EGI tables often say E45/E108).
+  shared_channel_egi: {F7: 33, F3: 24, FC5: 34, T7: 39, P7: 58, O1: 70, O2: 83, P8: 96, T8: 115, FC6: 116, F4: 124, F8: 122}

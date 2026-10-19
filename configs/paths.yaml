@@ -6,7 +6,9 @@ raw:
   faced_ratings: "datasets/FACED/Code/Validation/Classification_validation/Svm_analysis/After_remarks"
   deap: "datasets/deap"
   dreamer: "datasets/DREAMER.mat"
-  dens: "datasets/dens"                # optional secondary, not used
+  dens: "datasets/dens"                # OpenNeuro ds003751 v1.0.6 raw (30/40 .fdt truncated; not used in rev 3)
+  dens_epochs: "datasets/dens_old/Physiological Data/PreProcessed-Emotion (Group-wise)/EEG_Data"   # rev 3 training data
+  dens_beh: "datasets/dens_old/Physiological Data/Raw Data/Behavioural Data"                        # ratings, all 40 subjects
 
 processed:
   root: "data/processed"

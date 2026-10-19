@@ -6,6 +6,7 @@
 # Categories absent from Scherer's table (inspiration, tenderness, amusement) are extrapolated -> confidence "low".
 #
 # STATUS: DRAFT, pending approval (Gate 4). Pipeline runs on it; freeze by changing status to "approved" and committing.
+# Rev 3 uses the `dens` section (6 coarse classes); `faced` is kept for the deferred FACED corpus.
 status: draft_pending_approval
 dims: [novelty, goal_conduciveness, coping]
 
@@ -19,3 +20,13 @@ faced:
   inspiration: {novelty:  0.4, goal_conduciveness:  0.6, coping:  0.5, dominance_prototype: 0.65, confidence: low,    note: "elevation; extrapolated from pride/joy"}
   joy:         {novelty:  0.4, goal_conduciveness:  0.9, coping:  0.6, dominance_prototype: 0.70, confidence: high,   note: "conducive, unexpected (Scherer 2001: joy/elation)"}
   tenderness:  {novelty: -0.4, goal_conduciveness:  0.6, coping:  0.4, dominance_prototype: 0.55, confidence: low,    note: "familiar, affiliative; extrapolated"}
+
+# Rev 3 (20 Oct 2026): one row per coarse class used for DENS training (and DREAMER secondary labels).
+# dominance_prototype is unused for DENS (real dominance ratings) and kept only for schema compatibility.
+dens:
+  happy:    {novelty:  0.5, goal_conduciveness:  0.8, coping:  0.6, dominance_prototype: 0.70, confidence: high,   note: "conducive, pleasant, often unexpected (Scherer 2001: joy/elation); merges amusement/excitement"}
+  surprise: {novelty:  0.9, goal_conduciveness:  0.0, coping:  0.0, dominance_prototype: 0.40, confidence: medium, note: "sudden/unpredictable, goal relevance open (Scherer 2001: surprise); DENS G3 also contains alarm/tension"}
+  fear:     {novelty:  0.8, goal_conduciveness: -0.8, coping: -0.8, dominance_prototype: 0.20, confidence: high,   note: "sudden, obstructive, low power (Scherer 2001: fear)"}
+  disgust:  {novelty:  0.3, goal_conduciveness: -0.6, coping:  0.2, dominance_prototype: 0.55, confidence: medium, note: "intrinsic unpleasantness dominates; coping open (DENS G4 includes hate)"}
+  anger:    {novelty:  0.5, goal_conduciveness: -0.8, coping:  0.7, dominance_prototype: 0.70, confidence: high,   note: "obstructive, other-caused, high power (Scherer 2001: hot anger)"}
+  sadness:  {novelty: -0.3, goal_conduciveness: -0.8, coping: -0.6, dominance_prototype: 0.25, confidence: high,   note: "irrevocable loss, low power (Scherer 2001: sadness)"}

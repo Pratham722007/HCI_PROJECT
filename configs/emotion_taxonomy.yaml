@@ -1,6 +1,22 @@
-# Emotion taxonomy (rev 2). FACED fine 9 -> coarse 7. Fixed before training.
-# Surprise is not present in FACED and is dropped from the 7-class set.
-coarse_classes: [happy, tenderness, anger, fear, disgust, sadness, neutral]
+# Emotion taxonomy. Rev 3 (20 Oct 2026, before any DENS training): 6 coarse classes shared by DENS and DREAMER.
+# Neutral is absent from the DENS click-locked epochs, so the deck's 7 classes become 6 (research-plan.md 3.1).
+coarse_classes: [happy, surprise, fear, disgust, anger, sadness]
+
+dens:
+  # 8 self-report groups of the DENS group-wise epochs (folder Group-01..08) -> coarse class. We follow the authors'
+  # grouping: G3 (Alarmed, Startled, Tense) is closer to "alarm" than pure surprise; G7 contains "Taken Aback".
+  groups:
+    1: {words: [Amused, Delighted, Happy, Joyous], coarse: happy}
+    2: {words: [Adventorous, Aroused, Excited, Lust, Passionate], coarse: happy}
+    3: {words: [Alarmed, Startled, Tense], coarse: surprise}
+    4: {words: [Disgust, Hate], coarse: disgust}
+    5: {words: [Afraid], coarse: fear}
+    6: {words: [Angry, Distress], coarse: anger}
+    7: {words: [Depressed, Despondent, Dissatisfied, Melancholic, Miserable, Taken Aback], coarse: sadness}
+    8: {words: [Sad], coarse: sadness}
+
+# Rev 2 (FACED, deferred): FACED windows carry their own 7-class coarse labels
+# [happy, tenderness, anger, fear, disgust, sadness, neutral] from src/hcbm/io/faced.py; not used in rev 3.
 
 faced:
   fine_classes: [anger, disgust, fear, sadness, neutral, amusement, inspiration, joy, tenderness]
@@ -50,11 +66,11 @@ dreamer:
   # secondary/loose: DREAMER has no emotion labels in the .mat; clip -> target emotion transcribed from
   # Katsigiannis & Ramzan (2018), IEEE JBHI 22(1), Table I (film-clip order 1-18). Sanity-checked 19 Oct 2026 against
   # per-clip mean ratings (calmness clips 1/11 lowest arousal; anger/sadness 8/9/17 lowest valence).
-  # surprise has no coarse class -> excluded (-1) from 7-class metrics.
+  # rev 3: calmness has no coarse class -> excluded (-1); surprise now maps to the surprise class (16/18 clips labelled).
   status: "transcribed_secondary"
   clip_to_fine: {1: calmness, 2: surprise, 3: amusement, 4: fear, 5: excitement, 6: disgust, 7: happiness, 8: anger, 9: sadness,
                  10: disgust, 11: calmness, 12: amusement, 13: happiness, 14: anger, 15: fear, 16: excitement, 17: sadness, 18: surprise}
-  fine_to_coarse: {amusement: happy, excitement: happy, calmness: neutral, anger: anger, disgust: disgust, fear: fear, sadness: sadness, happiness: happy}
+  fine_to_coarse: {amusement: happy, excitement: happy, happiness: happy, surprise: surprise, fear: fear, disgust: disgust, anger: anger, sadness: sadness}
 
 deap:
   # quadrants only (valence/arousal > 5, ratings from participant_ratings.xls)

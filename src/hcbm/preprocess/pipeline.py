@@ -69,3 +69,17 @@ def reject_artifacts(windows, rel_k, min_uv):
     finite = peak[np.isfinite(peak)]
     thr = max(rel_k * np.median(finite), min_uv) if finite.size else min_uv
     return peak > thr
+
+
+def cut_windows_strided(x, fs, win_sec, stride_sec, n_windows=None):
+    """Cut (C, T) into windows of win_sec every stride_sec, starting at sample 0 -> (n, C, win). Windows overlap when
+    stride < window (DENS 7 s epochs); every window of one epoch must stay in the same fold."""
+    w, s = int(round(win_sec * fs)), int(round(stride_sec * fs))
+    n = (x.shape[-1] - w) // s + 1
+    if n < 1:
+        raise ValueError("signal shorter than one window")
+    if n_windows is not None:
+        if n < n_windows:
+            raise ValueError(f"only {n} windows fit, {n_windows} required")
+        n = n_windows
+    return np.stack([x[..., i * s:i * s + w] for i in range(n)], axis=0)

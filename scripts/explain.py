@@ -1,12 +1,13 @@
 """Phase 8: explanations + FaithScore -> reports/<tag>/{explanations.jsonl, faithscore.md, faithscore_manual_labels.csv}.
 
-Run: .venv/bin/python -E -P scripts/explain.py --tag 12ch --backend qwen [--n 60 --n-deap 20 --device cpu]
+Run: .venv/bin/python -E -P scripts/explain.py --tag dens12 --backend qwen [--n 60 --n-deap 20 --device cpu]
      --backend template = deterministic fallback (plumbing check only; faithful by construction).
-Per sampled window (fold-0 models; FACED test stratified by class x CBM-correct, plus a DEAP subset):
+Per sampled window (fold-0 models; primary-dataset test subjects stratified by class x CBM-correct, at most one window
+per epoch/trial, plus a DEAP subset):
   CBM  orig   : explain predicted concepts.
   CBM  flip   : valence v -> 1-v, propagated through L3 and the emotion head, re-explained.
   CBM  placebo: one L1 region bin changed in the TEXT only (L2/L3/emotion fixed) -> polarity should NOT change.
-  flat orig/flip: flat output; flip = most probable class whose FACED-train valence lies on the other side of 0.5.
+  flat orig/flip: flat output; flip = most probable class whose train-subject mean valence lies on the other side of 0.5.
 Judges, stored separately: (a) SST-2 sentiment classifier label flip in the expected direction; (b) valence-term check.
 FaithScore = faithful changes / perturbations; placebo rate = polarity changes / placebo perturbations.
 """
@@ -23,15 +24,16 @@ from hcbm.explain.generator import TemplateExplainer, QwenExplainer, polarity_te
 from hcbm.eval import metrics as M  # noqa: E402
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--tag", default="12ch"); ap.add_argument("--backend", default="qwen", choices=["qwen", "template"])
+ap.add_argument("--tag", default="dens12"); ap.add_argument("--backend", default="qwen", choices=["qwen", "template"])
 ap.add_argument("--n", type=int, default=60); ap.add_argument("--n-deap", type=int, default=20)
 ap.add_argument("--device", default="cpu"); ap.add_argument("--seed", type=int, default=42)
 a = ap.parse_args()
 mcfg = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))
 man = runs.manifest(ROOT, a.tag)
 out_dir = os.path.join(ROOT, "reports", a.tag); os.makedirs(out_dir, exist_ok=True)
-sp = json.load(open(os.path.join(ROOT, "data/processed/faced/splits.json")))
-F = tdata.load(ROOT, "faced", a.tag)
+PRIMARY = man.get("primary", "faced")
+sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json")))
+F = tdata.load(ROOT, PRIMARY, a.tag)
 COARSE = F["meta"]["coarse_classes"]; CN = F["concept_names"]
 cbm, ck_c = runs.load_fold(runs.fold_paths(ROOT, a.tag, "level123")[0], mcfg)
 flat, ck_f = runs.load_fold(runs.fold_paths(ROOT, a.tag, "flat")[0], mcfg)
@@ -41,6 +43,8 @@ rng = np.random.default_rng(a.seed)
 
 # ---- sample windows ----
 test = np.flatnonzero(~F["reject"] & np.isin(F["subject"], sp["test"]))
+_, first = np.unique(np.char.add(F["subject"][test], "|" + F["trial"][test].astype(str)), return_index=True)
+test = test[np.sort(first)]                                   # one window per (subject, trial): overlapping DENS windows
 pc = predict(cbm, F["E"][test])["logits"].argmax(1)
 strata = {}
 for r, ok in zip(test, pc == F["emotion"][test]):
@@ -54,7 +58,7 @@ while len(picked) < min(a.n, len(test)):
     i += 1
     if not any(strata.values()):
         break
-sample = [("faced", F, r) for r in picked]
+sample = [(PRIMARY, F, r) for r in picked]
 if a.n_deap and "deap" in man.get("cross_corpus", []):
     DP = tdata.load(ROOT, "deap", a.tag)
     sample += [("deap", DP, r) for r in rng.choice(np.flatnonzero(~DP["reject"]), a.n_deap, replace=False)]

@@ -1,11 +1,11 @@
 """Phase 9: human-in-the-loop experiments -> reports/<tag>/hitl.md + figures.
 
-Run: .venv/bin/python -E -P scripts/hitl.py --tag 12ch
+Run: .venv/bin/python -E -P scripts/hitl.py --tag dens12
 1. Intervention curves (main CBM, level123): replace 0-100% of one level's predicted concepts with ground truth, random
-   vs uncertainty-ordered; FACED test (L1 real band power, L2 real ratings, L3 PSEUDO-expert) and DREAMER (L1, L2 real;
-   coarse emotion is secondary). Ensemble of the 5 fold models; CI = subject bootstrap.
+   vs uncertainty-ordered; primary-dataset test subjects (rev 3 = DENS: L1 real band power, L2 real ratings, L3
+   PSEUDO-expert) and DREAMER (L1, L2 real, L3 pseudo; coarse emotion is secondary). Ensemble of the 5 fold models; CI = subject bootstrap.
 2. Escalation: risk-coverage, AURC vs random escalation, error rate escalated vs retained at the threshold fixed on
-   FACED validation, ECE before/after temperature scaling.
+   primary-dataset validation folds, ECE before/after temperature scaling.
 """
 import argparse, json, os, sys
 import numpy as np
@@ -18,18 +18,18 @@ from hcbm.models.confidence import softmax  # noqa: E402
 from hcbm.hitl.intervention import intervention_mask  # noqa: E402
 from hcbm.eval import metrics as M, plots  # noqa: E402
 
-ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="12ch"); ap.add_argument("--variant", default="level123")
+ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="dens12"); ap.add_argument("--variant", default="level123")
 ap.add_argument("--n-boot", type=int, default=500)
 a = ap.parse_args()
 mcfg = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))
 man = runs.manifest(ROOT, a.tag)
 out_dir = os.path.join(ROOT, "reports", a.tag); os.makedirs(os.path.join(out_dir, "figures"), exist_ok=True)
-sp = json.load(open(os.path.join(ROOT, "data/processed/faced/splits.json")))
-F = tdata.load(ROOT, "faced", a.tag)
+PRIMARY = man.get("primary", "faced"); NAME = PRIMARY.upper()
+sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json")))
+F = tdata.load(ROOT, PRIMARY, a.tag)
 DR = tdata.load(ROOT, "dreamer", a.tag) if "dreamer" in man.get("cross_corpus", []) else None
 folds = [runs.load_fold(p, mcfg) for p in runs.fold_paths(ROOT, a.tag, a.variant)]
 FRACS = np.round(np.linspace(0, 1, 11), 2)
-L7 = list(range(7))
 
 
 def curve(D, rows, level, order):
@@ -50,9 +50,10 @@ def curve(D, rows, level, order):
 
 lines = [f"# Human-in-the-loop experiments (tag `{a.tag}`, model `{a.variant}`)\n", runs.placeholder_banner(man)]
 test_rows = np.flatnonzero(~F["reject"] & np.isin(F["subject"], sp["test"]))
-sets = [("FACED test", F, test_rows, ("l1", "l2", "l3"))]
+sets = [(f"{NAME} test", F, test_rows, ("l1", "l2", "l3"))]
 if DR is not None:
-    sets.append(("DREAMER (secondary labels)", DR, np.flatnonzero(~DR["reject"] & (DR["emotion"] >= 0)), ("l1", "l2")))
+    dr_levels = ("l1", "l2", "l3") if not np.isnan(DR["l3"]).all() else ("l1", "l2")
+    sets.append(("DREAMER (secondary labels)", DR, np.flatnonzero(~DR["reject"] & (DR["emotion"] >= 0)), dr_levels))
 curves = {}
 lines += ["## 1. Concept intervention\n",
           "Emotion accuracy after correcting a fraction of one level's concepts with ground truth (L3 = **pseudo-expert**: "
@@ -70,23 +71,23 @@ for name, D, rows, levels in sets:
 fig, ax = plots.axes(3)
 for i, lv in enumerate(("l1", "l2", "l3")):
     for j, order in enumerate(("random", "uncertainty")):
-        c = curves[("FACED test", lv, order)]
+        c = curves[(f"{NAME} test", lv, order)]
         x = [r["frac"] * 100 for r in c]; y = [r["est"] for r in c]
         ax[i].plot(x, y, color=plots.SERIES[j], lw=2, marker="o", ms=4, label=order)
         ax[i].fill_between(x, [r["lo"] for r in c], [r["hi"] for r in c], color=plots.SERIES[j], alpha=0.12, lw=0)
     ax[i].set_title(f"Correct {lv.upper()}" + (" (pseudo-expert)" if lv == "l3" else ""), fontsize=10)
     ax[i].set_xlabel("% concepts corrected"); ax[i].set_ylabel("emotion accuracy" if i == 0 else "")
 ax[0].legend(frameon=False, fontsize=9)
-plots.save(fig, os.path.join(out_dir, "figures/intervention_faced.png"))
-lines.append("![intervention](figures/intervention_faced.png)\n")
+plots.save(fig, os.path.join(out_dir, "figures/intervention.png"))
+lines.append("![intervention](figures/intervention.png)\n")
 
 # ---------------- escalation ----------------
 lines += ["## 2. Confidence escalation\n",
-          f"Threshold per fold = confidence keeping {mcfg['training']['escalation_coverage']:.0%} of that fold's FACED validation windows. "
+          f"Threshold per fold = confidence keeping {mcfg['training']['escalation_coverage']:.0%} of that fold's {NAME} validation windows. "
           "Values = mean +- std over the 5 fold models. Random escalation AURC = overall error rate.\n",
           "| model | set | coverage at threshold | error retained | error escalated | AURC | random AURC | ECE raw | ECE temp-scaled |",
           "|---|---|---|---|---|---|---|---|---|"]
-evalsets = [("FACED val (CV)", F, None), ("FACED test", F, test_rows)]
+evalsets = [(f"{NAME} val (CV)", F, None), (f"{NAME} test", F, test_rows)]
 if DR is not None:
     evalsets.append(("DREAMER (secondary)", DR, np.flatnonzero(~DR["reject"] & (DR["emotion"] >= 0))))
 rc_curves = {}
@@ -105,7 +106,7 @@ for v in ("flat", a.variant):
             st.append([keep.mean(), 1 - correct[keep].mean() if keep.any() else np.nan,
                        1 - correct[~keep].mean() if (~keep).any() else np.nan, aurc, 1 - correct.mean(),
                        M.ece(p_raw, y), M.ece(p_t, y)])
-            if sname == "FACED test" and k == 0:
+            if sname == f"{NAME} test" and k == 0:
                 rc_curves[v] = (cov, risk)
         s = np.array(st, float); mu, sd = np.nanmean(s, 0), np.nanstd(s, 0)
         lines.append(f"| {v} | {sname} | " + " | ".join(f"{m_:.3f} +- {s_:.3f}" for m_, s_ in zip(mu, sd)) + " |")
@@ -118,10 +119,10 @@ for j, (v, (cov, risk)) in enumerate(rc_curves.items()):
     ax[0].plot(cov * 100, risk, color=plots.SERIES[j], lw=2, label=v)
     ax[0].axhline(risk[-1], color=plots.SERIES[j], lw=1, ls="--", alpha=0.6)
 ax[0].set_xlabel("coverage (% windows kept, most confident first)"); ax[0].set_ylabel("error rate among kept")
-ax[0].set_title("Risk-coverage, FACED test (fold 0)\ndashed = random escalation", fontsize=10)
+ax[0].set_title(f"Risk-coverage, {NAME} test (fold 0)\ndashed = random escalation", fontsize=10)
 ax[0].legend(frameon=False, fontsize=9)
-plots.save(fig, os.path.join(out_dir, "figures/risk_coverage_faced.png"))
-lines.append("\n![risk-coverage](figures/risk_coverage_faced.png)\n")
+plots.save(fig, os.path.join(out_dir, "figures/risk_coverage.png"))
+lines.append("\n![risk-coverage](figures/risk_coverage.png)\n")
 open(os.path.join(out_dir, "hitl.md"), "w").write("\n".join(lines))
 json.dump({f"{n}|{lv}|{o}": c for (n, lv, o), c in curves.items()}, open(os.path.join(out_dir, "hitl_curves.json"), "w"))
 print("wrote", os.path.join(out_dir, "hitl.md"))

@@ -12,7 +12,7 @@ hierarchical_cbm:
     output_dim: 37  # 12 channels * 3 bands + 1 FAA = 37
     hidden_dims: [256, 128]
   level_2:
-    description: "Affective dimensions (Valence, Arousal real ratings; Dominance = pseudo-label, exploratory)"
+    description: "Affective dimensions (Valence, Arousal, Dominance: real DENS self-ratings)"
     output_dim: 3
     hidden_dims: [64, 32]
   level_3:
@@ -20,16 +20,16 @@ hierarchical_cbm:
     output_dim: 3
     hidden_dims: [32, 16]
   emotion_classifier:
-    description: "Final 7-class emotion projection"
-    num_classes: 7
-    classes: ["happy", "tenderness", "anger", "fear", "disgust", "sadness", "neutral"]  # see emotion_taxonomy.yaml; surprise not in FACED
+    description: "Final 6-class emotion projection"
+    num_classes: 6
+    classes: ["happy", "surprise", "fear", "disgust", "anger", "sadness"]  # rev 3, see emotion_taxonomy.yaml (no neutral in DENS epochs)
 
 baseline_flat_mlp:
   description: "Flat 2-layer MLP + GELU directly mapping EEGPT embedding to emotion class"
   hidden_dim: 128
   activation: "GELU"
   dropout: 0.1
-  num_classes: 7
+  num_classes: 6
 
 explain:
   qwen_model_name: "Qwen/Qwen2.5-1.5B-Instruct"
@@ -38,14 +38,14 @@ explain:
 
 # ---- Phase 5 training (FACED only; tuned on FACED validation folds, never on DEAP/DREAMER) ----
 training:
-  n_classes: 7
+  n_classes: 6
   lr: 1.0e-3
   weight_decay: 1.0e-4
   dropout: 0.1
   batch_size: 256
   max_epochs: 80
   patience: 10                 # early stopping on validation macro-F1
-  dominance_weight: 0.25       # D3: pseudo-label, down-weighted
+  dominance_weight: 1.0        # rev 3: DENS dominance is a real rating (D3 pseudo-label applied to FACED only)
   loss_weights: {l1: 1.0, l2: 1.0, l3: 1.0, emotion: 1.0}
   escalation_coverage: 0.80    # threshold keeps 80% of FACED validation windows; the rest are escalated
   search:                      # small documented grid (scripts/train.py --search), chosen by mean 5-fold val macro-F1

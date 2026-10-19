@@ -1,4 +1,7 @@
-"""Phase 2.8: cross-dataset QC -> reports/qc.md (+ figures). Run: .venv/bin/python -E -P scripts/qc_cross_dataset.py"""
+"""Phase 2.8: cross-dataset QC -> reports/qc.md (+ figures).
+
+Run: .venv/bin/python -E -P scripts/qc_cross_dataset.py [datasets...]   (default: primary + cross-corpus; rev 3 = dens deap dreamer)
+"""
 import os, sys, json
 import numpy as np, h5py
 from scipy.signal import welch
@@ -15,14 +18,15 @@ from hcbm.utils.config import load_yaml_config  # noqa: E402
 cfg = load_yaml_config(os.path.join(ROOT, "configs/protocol.yaml"))
 fs, bands = cfg["fs"], cfg["band_edges"]
 rng = np.random.default_rng(42)
-DS = ["faced", "deap", "dreamer"]
+DS = sys.argv[1:] or [cfg["primary_dataset"]] + cfg["cross_corpus_datasets"]
+tax = load_yaml_config(os.path.join(ROOT, cfg["emotion_taxonomy_path"]))
 D = {}
 for d in DS:
     with h5py.File(os.path.join(ROOT, f"data/processed/{d}/windows_12ch.h5"), "r") as f:
         D[d] = dict(X=f["X"][:], sub=f["subject_id"][:].astype(str), trial=f["trial_id"][:], reject=f["reject"][:],
                     ch=[c.decode() for c in f["ch_names"][:]], peak=f["labels/peak_uv"][:],
                     labels={k: f["labels"][k][:] for k in f["labels"]})
-assert D["faced"]["ch"] == D["deap"]["ch"] == D["dreamer"]["ch"], "channel order differs"
+assert all(D[d]["ch"] == D[DS[0]]["ch"] for d in DS), "channel order differs"
 
 
 def band_feats(X):
@@ -42,7 +46,7 @@ for i, d in enumerate(DS):
     F, f, p = band_feats(x["X"][pick]); spec[d] = p.mean((0, 1))
     feats.append(F); groups += [f"{d}_{s}" for s in x["sub"][pick]]; dsl += [i] * len(pick)
 
-lines += ["", "Expected window counts: FACED 119 subjects x 28 clips x 7 = 23,324 (4 subjects excluded, D1); DEAP 32 x 40 x 15 = 19,200; DREAMER 23 x 18 x 15 = 6,210.", ""]
+lines += ["", "Expected window counts: DENS 475 click-locked epochs x 4 = 1,900 (40 subjects); FACED 119 subjects x 28 clips x 7 = 23,324 (4 subjects excluded, D1); DEAP 32 x 40 x 15 = 19,200; DREAMER 23 x 18 x 15 = 6,210.", ""]
 lines += ["## Per-subject noise flags (raw window peak, uV, before z-score)", "",
           "Subject median peak and rejection rate; subjects flagged if rejection > 20% or median peak > 300 uV. **Flagged subjects are kept (no post-hoc exclusion on the zero-shot corpora); they are reported for sensitivity analyses.**", "",
           "| dataset | subject | median peak uV | rejected % | flag |", "|---|---|---|---|---|"]
@@ -69,7 +73,7 @@ lines += ["![spectra](figures/qc_spectra_amplitude.png)", ""]
 # band-power distributions (log power, z-scored windows)
 F = np.vstack(feats); y = np.array(dsl); g = np.array(groups)
 lines += ["## Band-power distribution after z-scoring (log power, mean over channels, mean +- std over windows)", "", "| dataset | theta | alpha | gamma |", "|---|---|---|---|"]
-nch = len(D["faced"]["ch"])
+nch = len(D[DS[0]]["ch"])
 for i, d in enumerate(DS):
     Fi = F[y == i]; r = [Fi[:, j * nch:(j + 1) * nch].mean(1) for j in range(3)]
     lines.append(f"| {d} | " + " | ".join(f"{a.mean():.2f} +- {a.std():.2f}" for a in r) + " |")
@@ -79,15 +83,22 @@ accs = []
 for tr, te in GroupKFold(5).split(F, y, g):
     clf = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(F[tr], y[tr])
     accs.append(float((clf.predict(F[te]) == y[te]).mean()))
-lines += ["", "## Domain-shift check", "", f"Logistic regression on 36 log band-power features (12 ch x theta/alpha/gamma) predicting the dataset of origin, balanced (<=4000 windows/dataset), subject-wise 5-fold CV. Chance = 0.333. **Accuracy = {np.mean(accs):.3f} +- {np.std(accs):.3f}** (folds: {', '.join(f'{a:.3f}' for a in accs)}).",
+lines += ["", "## Domain-shift check", "", f"Logistic regression on 36 log band-power features (12 ch x theta/alpha/gamma) predicting the dataset of origin, balanced (<=4000 windows/dataset), subject-wise 5-fold CV. Chance = {1 / len(DS):.3f}. **Accuracy = {np.mean(accs):.3f} +- {np.std(accs):.3f}** (folds: {', '.join(f'{a:.3f}' for a in accs)}).",
           "A value far above chance means the corpora are separable from band power alone (strong dataset shift); the paper must discuss this as a limitation of zero-shot cross-corpus transfer.", ""]
 
 # label distributions
 lines += ["## Label distributions", ""]
-fl = D["faced"]["labels"]; lab = fl["coarse"]
-from hcbm.io.faced import COARSE
-lines += ["FACED coarse 7-class window counts: " + ", ".join(f"{c} {int((lab == i).sum())}" for i, c in enumerate(COARSE)),
-          f"FACED valence>3.5: {100*(fl['valence_raw'] > 3.5).mean():.1f}% ; arousal>3.5: {100*(fl['arousal_raw'] > 3.5).mean():.1f}%"]
+if "dens" in D:
+    nl = D["dens"]["labels"]; C = tax["coarse_classes"]
+    lines += ["DENS coarse window counts: " + ", ".join(f"{c} {int((nl['coarse'] == i).sum())}" for i, c in enumerate(C)),
+              f"DENS valence>5: {100*(nl['valence_raw'] > 5).mean():.1f}% ; arousal>5: {100*(nl['arousal_raw'] > 5).mean():.1f}% ; "
+              f"dominance>5: {100*(nl['dominance_raw'] > 5).mean():.1f}% (ties at 5: V {100*(nl['valence_raw'] == 5).mean():.1f}%)",
+              "DENS epochs per subject: " + ", ".join(f"{s} {int(n) // 4}" for s, n in zip(*np.unique(D["dens"]["sub"], return_counts=True)))]
+if "faced" in D:
+    fl = D["faced"]["labels"]; lab = fl["coarse"]
+    from hcbm.io.faced import COARSE
+    lines += ["FACED coarse 7-class window counts: " + ", ".join(f"{c} {int((lab == i).sum())}" for i, c in enumerate(COARSE)),
+              f"FACED valence>3.5: {100*(fl['valence_raw'] > 3.5).mean():.1f}% ; arousal>3.5: {100*(fl['arousal_raw'] > 3.5).mean():.1f}%"]
 dl = D["deap"]["labels"]; q = dl["quadrant"]
 lines += [f"DEAP quadrants (LVLA, LVHA, HVLA, HVHA, tie): " + ", ".join(str(int((q == k).sum())) for k in (0, 1, 2, 3, -1)),
           f"DEAP valence>5: {100*(dl['valence_raw'] > 5).mean():.1f}% ; arousal>5: {100*(dl['arousal_raw'] > 5).mean():.1f}%"]

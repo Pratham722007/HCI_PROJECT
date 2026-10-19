@@ -53,7 +53,7 @@ def test_protocol_yaml():
     bands = cfg.get("band_edges", {})
     assert bands.get("theta") == [4.0, 8.0]
     assert bands.get("alpha") == [8.0, 13.0]
-    assert bands.get("gamma") == [30.0, 45.0]
+    assert bands.get("gamma") == [30.0, 40.0]          # rev 3 (D16): DENS epochs are low-passed at 40 Hz
 
     # Check rating thresholds exist
     thresholds = cfg.get("rating_thresholds", {})
