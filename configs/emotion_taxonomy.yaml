@@ -47,9 +47,13 @@ faced:
   # class balance: happy 9 clips, neutral 4, all others 3 (note: imbalance; use macro-F1)
 
 dreamer:
-  # secondary/loose: DREAMER has no emotion labels in the .mat; the clip->emotion table must come
-  # from the DREAMER paper (Katsigiannis & Ramzan 2018) and is NOT yet transcribed.
-  status: "pending_clip_table"
+  # secondary/loose: DREAMER has no emotion labels in the .mat; clip -> target emotion transcribed from
+  # Katsigiannis & Ramzan (2018), IEEE JBHI 22(1), Table I (film-clip order 1-18). Sanity-checked 19 Oct 2026 against
+  # per-clip mean ratings (calmness clips 1/11 lowest arousal; anger/sadness 8/9/17 lowest valence).
+  # surprise has no coarse class -> excluded (-1) from 7-class metrics.
+  status: "transcribed_secondary"
+  clip_to_fine: {1: calmness, 2: surprise, 3: amusement, 4: fear, 5: excitement, 6: disgust, 7: happiness, 8: anger, 9: sadness,
+                 10: disgust, 11: calmness, 12: amusement, 13: happiness, 14: anger, 15: fear, 16: excitement, 17: sadness, 18: surprise}
   fine_to_coarse: {amusement: happy, excitement: happy, calmness: neutral, anger: anger, disgust: disgust, fear: fear, sadness: sadness, happiness: happy}
 
 deap:

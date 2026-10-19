@@ -1,0 +1,21 @@
+# Level-3 appraisal pseudo-labels (Scherer CPM), one row per fine emotion category.
+# Values in [-1, 1]: novelty (low -> high), goal_conduciveness (obstructive -> conducive), coping (low -> high power).
+# dominance_prototype (0-1) is the Level-2 dominance PSEUDO-label for FACED (D3), not used where real ratings exist.
+# Sources: Scherer (2001) "Appraisal considered as a process of multilevel sequential checking", Table 5.4
+# (predicted appraisal profiles for modal emotions); Scherer (2009) Cognition & Emotion 23(7); Ellsworth & Scherer (2003).
+# Categories absent from Scherer's table (inspiration, tenderness, amusement) are extrapolated -> confidence "low".
+#
+# STATUS: DRAFT, pending approval (Gate 4). Pipeline runs on it; freeze by changing status to "approved" and committing.
+status: draft_pending_approval
+dims: [novelty, goal_conduciveness, coping]
+
+faced:
+  anger:       {novelty:  0.5, goal_conduciveness: -0.8, coping:  0.7, dominance_prototype: 0.70, confidence: high,   note: "obstructive, other-caused, high power (Scherer 2001: hot anger)"}
+  disgust:     {novelty:  0.3, goal_conduciveness: -0.6, coping:  0.2, dominance_prototype: 0.55, confidence: medium, note: "intrinsic unpleasantness dominates; coping open"}
+  fear:        {novelty:  0.8, goal_conduciveness: -0.8, coping: -0.8, dominance_prototype: 0.20, confidence: high,   note: "sudden, obstructive, low power (Scherer 2001: fear)"}
+  sadness:     {novelty: -0.3, goal_conduciveness: -0.8, coping: -0.6, dominance_prototype: 0.25, confidence: high,   note: "irrevocable loss, low power (Scherer 2001: sadness)"}
+  neutral:     {novelty: -0.5, goal_conduciveness:  0.0, coping:  0.0, dominance_prototype: 0.50, confidence: medium, note: "familiar, goal-irrelevant"}
+  amusement:   {novelty:  0.6, goal_conduciveness:  0.7, coping:  0.6, dominance_prototype: 0.65, confidence: low,    note: "incongruity (novel) resolved as harmless"}
+  inspiration: {novelty:  0.4, goal_conduciveness:  0.6, coping:  0.5, dominance_prototype: 0.65, confidence: low,    note: "elevation; extrapolated from pride/joy"}
+  joy:         {novelty:  0.4, goal_conduciveness:  0.9, coping:  0.6, dominance_prototype: 0.70, confidence: high,   note: "conducive, unexpected (Scherer 2001: joy/elation)"}
+  tenderness:  {novelty: -0.4, goal_conduciveness:  0.6, coping:  0.4, dominance_prototype: 0.55, confidence: low,    note: "familiar, affiliative; extrapolated"}

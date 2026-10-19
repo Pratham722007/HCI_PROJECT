@@ -1,0 +1,1042 @@
+[
+ {
+  "id": 0,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: positive (pleasant) (0.59 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.62 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.25 on -1..1)\n- coping potential: high coping (+0.34 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; alpha power, frontal: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 27%, neutral 18%, tenderness 17%.\nPredicted emotion: sadness (confidence 27%).",
+   "text": "The network's most likely class was sadness (confidence 27%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 1,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: positive (pleasant) (0.51 on 0-1)\n- arousal: low (0.43 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.55 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.10 on -1..1)\n- coping potential: high coping (+0.26 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; alpha power, frontal: high. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 18%, fear 17%, happy 15%.\nPredicted emotion: disgust (confidence 18%).",
+   "text": "The network's most likely class was disgust (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 2,
+  "A": {
+   "facts": "Top class probabilities: sadness 25%, neutral 21%, anger 19%.\nPredicted emotion: sadness (confidence 25%).",
+   "text": "The network's most likely class was sadness (confidence 25%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\n- gamma power, frontal: high\n- gamma power, temporal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: negative (unpleasant) (0.21 on 0-1)\n- arousal: high (0.56 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.32 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.25 on -1..1)\n- goal conduciveness: goal-obstructive (-0.48 on -1..1)\n- coping potential: low coping (-0.13 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: alpha power, frontal: high; alpha power, temporal: high; alpha power, parieto-occipital: high. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 3,
+  "A": {
+   "facts": "Top class probabilities: tenderness 17%, anger 17%, disgust 15%.\nPredicted emotion: tenderness (confidence 17%).",
+   "text": "The network's most likely class was tenderness (confidence 17%). No intermediate evidence is available for this model.",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, parieto-occipital: low\naffective state:\n- valence: positive (pleasant) (0.60 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.61 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.26 on -1..1)\n- coping potential: high coping (+0.34 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 4,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- gamma power, temporal: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: positive (pleasant) (0.52 on 0-1)\n- arousal: low (0.44 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.56 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.12 on -1..1)\n- coping potential: high coping (+0.27 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: anger 20%, happy 16%, fear 15%.\nPredicted emotion: anger (confidence 20%).",
+   "text": "The network's most likely class was anger (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 5,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: negative (unpleasant) (0.40 on 0-1)\n- arousal: low (0.48 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.50 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.13 on -1..1)\n- coping potential: high coping (+0.13 on -1..1)\nPredicted emotion: anger (confidence 15%).",
+   "text": "EEG evidence: gamma power, frontal: low; gamma power, temporal: low; gamma power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with anger (confidence 15%).",
+   "emotion": "anger"
+  },
+  "B": {
+   "facts": "Top class probabilities: neutral 17%, fear 16%, happy 15%.\nPredicted emotion: neutral (confidence 17%).",
+   "text": "The network's most likely class was neutral (confidence 17%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 6,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- alpha power, frontal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.13 on 0-1)\n- arousal: high (0.56 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.39 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.27 on -1..1)\n- goal conduciveness: goal-obstructive (-0.55 on -1..1)\n- coping potential: low coping (-0.20 on -1..1)\nPredicted emotion: disgust (confidence 18%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; alpha power, frontal: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 18%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 25%, disgust 23%, happy 17%.\nPredicted emotion: sadness (confidence 25%).",
+   "text": "The network's most likely class was sadness (confidence 25%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 7,
+  "A": {
+   "facts": "Top class probabilities: disgust 20%, fear 18%, happy 16%.\nPredicted emotion: disgust (confidence 20%).",
+   "text": "The network's most likely class was disgust (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\naffective state:\n- valence: negative (unpleasant) (0.35 on 0-1)\n- arousal: high (0.56 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.48 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.20 on -1..1)\n- goal conduciveness: goal-obstructive (-0.23 on -1..1)\n- coping potential: high coping (+0.06 on -1..1)\nPredicted emotion: fear (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with fear (confidence 15%).",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 8,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- all regions typical\naffective state:\n- valence: negative (unpleasant) (0.46 on 0-1)\n- arousal: low (0.48 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.53 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.15 on -1..1)\n- goal conduciveness: goal-obstructive (-0.01 on -1..1)\n- coping potential: high coping (+0.20 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: all regions typical. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 21%, anger 19%, fear 13%.\nPredicted emotion: happy (confidence 21%).",
+   "text": "The network's most likely class was happy (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 9,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: low\n- gamma power, frontal: high\n- gamma power, temporal: high\naffective state:\n- valence: negative (unpleasant) (0.26 on 0-1)\n- arousal: low (0.45 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.41 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.20 on -1..1)\n- goal conduciveness: goal-obstructive (-0.37 on -1..1)\n- coping potential: low coping (-0.04 on -1..1)\nPredicted emotion: disgust (confidence 16%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; alpha power, frontal: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 16%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 24%, disgust 23%, neutral 17%.\nPredicted emotion: sadness (confidence 24%).",
+   "text": "The network's most likely class was sadness (confidence 24%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 10,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\naffective state:\n- valence: positive (pleasant) (0.80 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.76 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.07 on -1..1)\n- goal conduciveness: goal-conducive (+0.62 on -1..1)\n- coping potential: high coping (+0.53 on -1..1)\nPredicted emotion: tenderness (confidence 19%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 19%).",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 20%, neutral 18%, sadness 15%.\nPredicted emotion: happy (confidence 20%).",
+   "text": "The network's most likely class was happy (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 11,
+  "A": {
+   "facts": "Top class probabilities: fear 21%, tenderness 20%, happy 20%.\nPredicted emotion: fear (confidence 21%).",
+   "text": "The network's most likely class was fear (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: low\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.39 on 0-1)\n- arousal: high (0.55 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.49 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.19 on -1..1)\n- goal conduciveness: goal-obstructive (-0.16 on -1..1)\n- coping potential: high coping (+0.11 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: alpha power, frontal: low; frontal alpha asymmetry (right minus left): low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 12,
+  "A": {
+   "facts": "Top class probabilities: neutral 20%, happy 17%, sadness 15%.\nPredicted emotion: neutral (confidence 20%).",
+   "text": "The network's most likely class was neutral (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\naffective state:\n- valence: positive (pleasant) (0.62 on 0-1)\n- arousal: low (0.43 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.64 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.09 on -1..1)\n- goal conduciveness: goal-conducive (+0.33 on -1..1)\n- coping potential: high coping (+0.38 on -1..1)\nPredicted emotion: tenderness (confidence 17%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 17%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 13,
+  "A": {
+   "facts": "Top class probabilities: neutral 26%, sadness 23%, happy 14%.\nPredicted emotion: neutral (confidence 26%).",
+   "text": "The network's most likely class was neutral (confidence 26%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\n- gamma power, frontal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: negative (unpleasant) (0.45 on 0-1)\n- arousal: low (0.36 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.50 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.11 on -1..1)\n- goal conduciveness: goal-obstructive (-0.02 on -1..1)\n- coping potential: high coping (+0.19 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 14,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, temporal: low\naffective state:\n- valence: positive (pleasant) (0.80 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.74 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.09 on -1..1)\n- goal conduciveness: goal-conducive (+0.60 on -1..1)\n- coping potential: high coping (+0.52 on -1..1)\nPredicted emotion: tenderness (confidence 19%).",
+   "text": "EEG evidence: theta power, temporal: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 19%).",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "Top class probabilities: neutral 19%, happy 18%, fear 15%.\nPredicted emotion: neutral (confidence 19%).",
+   "text": "The network's most likely class was neutral (confidence 19%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 15,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- gamma power, temporal: low\naffective state:\n- valence: positive (pleasant) (0.50 on 0-1)\n- arousal: low (0.42 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.54 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.08 on -1..1)\n- coping potential: high coping (+0.25 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: gamma power, temporal: low. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: neutral 22%, anger 18%, sadness 14%.\nPredicted emotion: neutral (confidence 22%).",
+   "text": "The network's most likely class was neutral (confidence 22%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 16,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- gamma power, temporal: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: positive (pleasant) (0.53 on 0-1)\n- arousal: low (0.47 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.57 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.13 on -1..1)\n- coping potential: high coping (+0.28 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: gamma power, temporal: low; frontal alpha asymmetry (right minus left): high. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 25%, happy 16%, fear 14%.\nPredicted emotion: sadness (confidence 25%).",
+   "text": "The network's most likely class was sadness (confidence 25%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 17,
+  "A": {
+   "facts": "Top class probabilities: tenderness 20%, happy 18%, fear 15%.\nPredicted emotion: tenderness (confidence 20%).",
+   "text": "The network's most likely class was tenderness (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- alpha power, parieto-occipital: low\naffective state:\n- valence: positive (pleasant) (0.70 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.69 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.10 on -1..1)\n- goal conduciveness: goal-conducive (+0.45 on -1..1)\n- coping potential: high coping (+0.44 on -1..1)\nPredicted emotion: tenderness (confidence 18%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; alpha power, parieto-occipital: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 18%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 18,
+  "A": {
+   "facts": "Top class probabilities: disgust 24%, sadness 20%, tenderness 15%.\nPredicted emotion: disgust (confidence 24%).",
+   "text": "The network's most likely class was disgust (confidence 24%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, temporal: high\n- gamma power, frontal: high\n- gamma power, temporal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: negative (unpleasant) (0.18 on 0-1)\n- arousal: high (0.54 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.35 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.25 on -1..1)\n- goal conduciveness: goal-obstructive (-0.50 on -1..1)\n- coping potential: low coping (-0.15 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: theta power, temporal: high; gamma power, frontal: high; gamma power, temporal: high. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 19,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, parieto-occipital: high\n- gamma power, frontal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: negative (unpleasant) (0.42 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.51 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.10 on -1..1)\n- coping potential: high coping (+0.15 on -1..1)\nPredicted emotion: anger (confidence 15%).",
+   "text": "EEG evidence: theta power, parieto-occipital: high; gamma power, frontal: high; gamma power, parieto-occipital: high. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with anger (confidence 15%).",
+   "emotion": "anger"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 20%, tenderness 17%, fear 16%.\nPredicted emotion: happy (confidence 20%).",
+   "text": "The network's most likely class was happy (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 20,
+  "A": {
+   "facts": "Top class probabilities: fear 23%, sadness 15%, anger 15%.\nPredicted emotion: fear (confidence 23%).",
+   "text": "The network's most likely class was fear (confidence 23%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\naffective state:\n- valence: negative (unpleasant) (0.36 on 0-1)\n- arousal: low (0.48 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.47 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.20 on -1..1)\n- coping potential: high coping (+0.09 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 21,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\naffective state:\n- valence: negative (unpleasant) (0.32 on 0-1)\n- arousal: low (0.48 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.44 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.19 on -1..1)\n- goal conduciveness: goal-obstructive (-0.28 on -1..1)\n- coping potential: high coping (+0.03 on -1..1)\nPredicted emotion: fear (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with fear (confidence 15%).",
+   "emotion": "fear"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 18%, neutral 17%, fear 16%.\nPredicted emotion: happy (confidence 18%).",
+   "text": "The network's most likely class was happy (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 22,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.40 on 0-1)\n- arousal: low (0.47 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.50 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.11 on -1..1)\n- coping potential: high coping (+0.14 on -1..1)\nPredicted emotion: anger (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; gamma power, frontal: low; gamma power, temporal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with anger (confidence 15%).",
+   "emotion": "anger"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 20%, sadness 19%, anger 15%.\nPredicted emotion: disgust (confidence 20%).",
+   "text": "The network's most likely class was disgust (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 23,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.30 on 0-1)\n- arousal: high (0.56 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.44 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.22 on -1..1)\n- goal conduciveness: goal-obstructive (-0.31 on -1..1)\n- coping potential: high coping (+0.01 on -1..1)\nPredicted emotion: disgust (confidence 16%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with disgust (confidence 16%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 24%, happy 15%, fear 14%.\nPredicted emotion: disgust (confidence 24%).",
+   "text": "The network's most likely class was disgust (confidence 24%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 24,
+  "A": {
+   "facts": "Top class probabilities: sadness 19%, happy 17%, disgust 16%.\nPredicted emotion: sadness (confidence 19%).",
+   "text": "The network's most likely class was sadness (confidence 19%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- alpha power, parieto-occipital: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: negative (unpleasant) (0.32 on 0-1)\n- arousal: low (0.48 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.45 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.19 on -1..1)\n- goal conduciveness: goal-obstructive (-0.27 on -1..1)\n- coping potential: high coping (+0.04 on -1..1)\nPredicted emotion: fear (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; alpha power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with fear (confidence 15%).",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 25,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.38 on 0-1)\n- arousal: low (0.48 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.48 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.16 on -1..1)\n- coping potential: high coping (+0.11 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: alpha power, temporal: low; alpha power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 19%, sadness 17%, fear 17%.\nPredicted emotion: disgust (confidence 19%).",
+   "text": "The network's most likely class was disgust (confidence 19%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 26,
+  "A": {
+   "facts": "Top class probabilities: neutral 20%, anger 18%, disgust 17%.\nPredicted emotion: neutral (confidence 20%).",
+   "text": "The network's most likely class was neutral (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- gamma power, frontal: high\n- gamma power, temporal: high\n- gamma power, parieto-occipital: high\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.30 on 0-1)\n- arousal: low (0.43 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.36 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.18 on -1..1)\n- goal conduciveness: goal-obstructive (-0.33 on -1..1)\n- coping potential: low coping (-0.00 on -1..1)\nPredicted emotion: disgust (confidence 16%).",
+   "text": "EEG evidence: gamma power, frontal: high; gamma power, temporal: high; gamma power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 16%).",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 27,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- all regions typical\naffective state:\n- valence: negative (unpleasant) (0.49 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.54 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.05 on -1..1)\n- coping potential: high coping (+0.23 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: all regions typical. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: neutral 21%, fear 17%, anger 16%.\nPredicted emotion: neutral (confidence 21%).",
+   "text": "The network's most likely class was neutral (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 28,
+  "A": {
+   "facts": "Top class probabilities: tenderness 21%, happy 18%, anger 15%.\nPredicted emotion: tenderness (confidence 21%).",
+   "text": "The network's most likely class was tenderness (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- alpha power, frontal: low\n- gamma power, frontal: low\n- gamma power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: positive (pleasant) (0.61 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.63 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.29 on -1..1)\n- coping potential: high coping (+0.36 on -1..1)\nPredicted emotion: tenderness (confidence 17%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; alpha power, frontal: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 17%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 29,
+  "A": {
+   "facts": "Top class probabilities: disgust 17%, happy 17%, neutral 16%.\nPredicted emotion: disgust (confidence 17%).",
+   "text": "The network's most likely class was disgust (confidence 17%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\naffective state:\n- valence: positive (pleasant) (0.54 on 0-1)\n- arousal: low (0.43 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.58 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.11 on -1..1)\n- goal conduciveness: goal-conducive (+0.16 on -1..1)\n- coping potential: high coping (+0.29 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 30,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: positive (pleasant) (0.52 on 0-1)\n- arousal: low (0.49 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.57 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.12 on -1..1)\n- coping potential: high coping (+0.27 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: alpha power, frontal: low; alpha power, temporal: low; alpha power, parieto-occipital: low. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 18%, tenderness 17%, anger 16%.\nPredicted emotion: happy (confidence 18%).",
+   "text": "The network's most likely class was happy (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 31,
+  "A": {
+   "facts": "Top class probabilities: tenderness 22%, happy 18%, sadness 15%.\nPredicted emotion: tenderness (confidence 22%).",
+   "text": "The network's most likely class was tenderness (confidence 22%). No intermediate evidence is available for this model.",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- all regions typical\naffective state:\n- valence: positive (pleasant) (0.58 on 0-1)\n- arousal: low (0.45 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.60 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.11 on -1..1)\n- goal conduciveness: goal-conducive (+0.24 on -1..1)\n- coping potential: high coping (+0.33 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: all regions typical. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 32,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, temporal: high\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.07 on 0-1)\n- arousal: high (0.65 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.29 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.33 on -1..1)\n- goal conduciveness: goal-obstructive (-0.64 on -1..1)\n- coping potential: low coping (-0.30 on -1..1)\nPredicted emotion: disgust (confidence 18%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 18%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 22%, fear 20%, disgust 18%.\nPredicted emotion: sadness (confidence 22%).",
+   "text": "The network's most likely class was sadness (confidence 22%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 33,
+  "A": {
+   "facts": "Top class probabilities: anger 18%, neutral 18%, happy 15%.\nPredicted emotion: anger (confidence 18%).",
+   "text": "The network's most likely class was anger (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.40 on 0-1)\n- arousal: low (0.45 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.49 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.15 on -1..1)\n- goal conduciveness: goal-obstructive (-0.11 on -1..1)\n- coping potential: high coping (+0.14 on -1..1)\nPredicted emotion: anger (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with anger (confidence 15%).",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 34,
+  "A": {
+   "facts": "Top class probabilities: disgust 35%, sadness 14%, happy 12%.\nPredicted emotion: disgust (confidence 35%).",
+   "text": "The network's most likely class was disgust (confidence 35%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, parieto-occipital: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.39 on 0-1)\n- arousal: low (0.48 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.49 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.14 on -1..1)\n- coping potential: high coping (+0.12 on -1..1)\nPredicted emotion: anger (confidence 15%).",
+   "text": "EEG evidence: alpha power, parieto-occipital: low; gamma power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with anger (confidence 15%).",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 35,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\naffective state:\n- valence: negative (unpleasant) (0.35 on 0-1)\n- arousal: low (0.40 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.44 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.22 on -1..1)\n- coping potential: high coping (+0.07 on -1..1)\nPredicted emotion: fear (confidence 15%).",
+   "text": "EEG evidence: alpha power, frontal: high; alpha power, temporal: high; alpha power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with fear (confidence 15%).",
+   "emotion": "fear"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 18%, happy 18%, neutral 15%.\nPredicted emotion: sadness (confidence 18%).",
+   "text": "The network's most likely class was sadness (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 36,
+  "A": {
+   "facts": "Top class probabilities: disgust 25%, fear 18%, happy 15%.\nPredicted emotion: disgust (confidence 25%).",
+   "text": "The network's most likely class was disgust (confidence 25%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: positive (pleasant) (0.58 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.63 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.25 on -1..1)\n- coping potential: high coping (+0.34 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 37,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.21 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.38 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.24 on -1..1)\n- goal conduciveness: goal-obstructive (-0.46 on -1..1)\n- coping potential: low coping (-0.11 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 21%, neutral 18%, sadness 15%.\nPredicted emotion: fear (confidence 21%).",
+   "text": "The network's most likely class was fear (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 38,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, temporal: low\n- gamma power, frontal: low\n- gamma power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.46 on 0-1)\n- arousal: low (0.47 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.53 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.14 on -1..1)\n- goal conduciveness: goal-obstructive (-0.00 on -1..1)\n- coping potential: high coping (+0.21 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: alpha power, temporal: low; gamma power, frontal: low; gamma power, temporal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 18%, anger 17%, happy 17%.\nPredicted emotion: sadness (confidence 18%).",
+   "text": "The network's most likely class was sadness (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 39,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: low\n- alpha power, temporal: low\n- gamma power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.38 on 0-1)\n- arousal: low (0.50 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.49 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.17 on -1..1)\n- coping potential: high coping (+0.11 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: alpha power, frontal: low; alpha power, temporal: low; gamma power, temporal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 20%, tenderness 18%, anger 16%.\nPredicted emotion: fear (confidence 20%).",
+   "text": "The network's most likely class was fear (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 40,
+  "A": {
+   "facts": "Top class probabilities: sadness 29%, disgust 13%, fear 13%.\nPredicted emotion: sadness (confidence 29%).",
+   "text": "The network's most likely class was sadness (confidence 29%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- gamma power, frontal: high\n- gamma power, temporal: high\n- gamma power, parieto-occipital: high\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.17 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.33 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.23 on -1..1)\n- goal conduciveness: goal-obstructive (-0.51 on -1..1)\n- coping potential: low coping (-0.15 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 41,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\n- gamma power, frontal: high\n- gamma power, temporal: high\n- gamma power, parieto-occipital: high\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: negative (unpleasant) (0.48 on 0-1)\n- arousal: low (0.40 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.52 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.04 on -1..1)\n- coping potential: high coping (+0.23 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 24%, tenderness 17%, happy 15%.\nPredicted emotion: sadness (confidence 24%).",
+   "text": "The network's most likely class was sadness (confidence 24%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 42,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.20 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.44 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.24 on -1..1)\n- goal conduciveness: goal-obstructive (-0.45 on -1..1)\n- coping potential: low coping (-0.11 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: theta power, parieto-occipital: low; alpha power, frontal: low; alpha power, temporal: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 27%, happy 16%, sadness 14%.\nPredicted emotion: disgust (confidence 27%).",
+   "text": "The network's most likely class was disgust (confidence 27%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 43,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, parieto-occipital: high\n- gamma power, temporal: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: positive (pleasant) (0.52 on 0-1)\n- arousal: low (0.44 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.57 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.12 on -1..1)\n- coping potential: high coping (+0.27 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 18%, fear 18%, sadness 16%.\nPredicted emotion: happy (confidence 18%).",
+   "text": "The network's most likely class was happy (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 44,
+  "A": {
+   "facts": "Top class probabilities: tenderness 20%, neutral 18%, happy 15%.\nPredicted emotion: tenderness (confidence 20%).",
+   "text": "The network's most likely class was tenderness (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\n- gamma power, temporal: high\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: negative (unpleasant) (0.47 on 0-1)\n- arousal: high (0.56 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.52 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.01 on -1..1)\n- coping potential: high coping (+0.20 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: alpha power, temporal: high; alpha power, parieto-occipital: high; gamma power, temporal: high. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 45,
+  "A": {
+   "facts": "Top class probabilities: tenderness 20%, anger 16%, neutral 16%.\nPredicted emotion: tenderness (confidence 20%).",
+   "text": "The network's most likely class was tenderness (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, parieto-occipital: high\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: positive (pleasant) (0.79 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.77 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.07 on -1..1)\n- goal conduciveness: goal-conducive (+0.61 on -1..1)\n- coping potential: high coping (+0.52 on -1..1)\nPredicted emotion: tenderness (confidence 19%).",
+   "text": "EEG evidence: theta power, parieto-occipital: high; frontal alpha asymmetry (right minus left): high. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 19%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 46,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.47 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.55 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.15 on -1..1)\n- goal conduciveness: goal-conducive (+0.02 on -1..1)\n- coping potential: high coping (+0.22 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: anger 28%, tenderness 18%, happy 17%.\nPredicted emotion: anger (confidence 28%).",
+   "text": "The network's most likely class was anger (confidence 28%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 47,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- gamma power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.41 on 0-1)\n- arousal: low (0.47 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.50 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.10 on -1..1)\n- coping potential: high coping (+0.15 on -1..1)\nPredicted emotion: anger (confidence 15%).",
+   "text": "EEG evidence: gamma power, temporal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with anger (confidence 15%).",
+   "emotion": "anger"
+  },
+  "B": {
+   "facts": "Top class probabilities: anger 18%, fear 17%, neutral 15%.\nPredicted emotion: anger (confidence 18%).",
+   "text": "The network's most likely class was anger (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 48,
+  "A": {
+   "facts": "Top class probabilities: fear 21%, happy 19%, disgust 18%.\nPredicted emotion: fear (confidence 21%).",
+   "text": "The network's most likely class was fear (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.47 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.54 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.00 on -1..1)\n- coping potential: high coping (+0.21 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 49,
+  "A": {
+   "facts": "Top class probabilities: anger 18%, happy 16%, neutral 16%.\nPredicted emotion: anger (confidence 18%).",
+   "text": "The network's most likely class was anger (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.35 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.46 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.19 on -1..1)\n- goal conduciveness: goal-obstructive (-0.23 on -1..1)\n- coping potential: high coping (+0.07 on -1..1)\nPredicted emotion: fear (confidence 15%).",
+   "text": "EEG evidence: alpha power, temporal: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with fear (confidence 15%).",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 50,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- gamma power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): high\naffective state:\n- valence: positive (pleasant) (0.81 on 0-1)\n- arousal: low (0.47 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.78 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.07 on -1..1)\n- goal conduciveness: goal-conducive (+0.64 on -1..1)\n- coping potential: high coping (+0.54 on -1..1)\nPredicted emotion: tenderness (confidence 20%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; gamma power, parieto-occipital: low. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 20%).",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 18%, tenderness 18%, sadness 15%.\nPredicted emotion: fear (confidence 18%).",
+   "text": "The network's most likely class was fear (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 51,
+  "A": {
+   "facts": "Top class probabilities: anger 22%, sadness 19%, disgust 16%.\nPredicted emotion: anger (confidence 22%).",
+   "text": "The network's most likely class was anger (confidence 22%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- all regions typical\naffective state:\n- valence: negative (unpleasant) (0.26 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.41 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.21 on -1..1)\n- goal conduciveness: goal-obstructive (-0.38 on -1..1)\n- coping potential: low coping (-0.04 on -1..1)\nPredicted emotion: disgust (confidence 16%).",
+   "text": "EEG evidence: all regions typical. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 16%).",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 52,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- alpha power, frontal: low\n- gamma power, frontal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: positive (pleasant) (0.68 on 0-1)\n- arousal: high (0.50 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.67 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.10 on -1..1)\n- goal conduciveness: goal-conducive (+0.42 on -1..1)\n- coping potential: high coping (+0.43 on -1..1)\nPredicted emotion: tenderness (confidence 18%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; alpha power, frontal: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 18%).",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 18%, fear 16%, tenderness 16%.\nPredicted emotion: happy (confidence 18%).",
+   "text": "The network's most likely class was happy (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 53,
+  "A": {
+   "facts": "Top class probabilities: sadness 20%, neutral 18%, anger 17%.\nPredicted emotion: sadness (confidence 20%).",
+   "text": "The network's most likely class was sadness (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\n- gamma power, frontal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: negative (unpleasant) (0.37 on 0-1)\n- arousal: low (0.45 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.47 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.17 on -1..1)\n- coping potential: high coping (+0.10 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 54,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: positive (pleasant) (0.55 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.59 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.12 on -1..1)\n- goal conduciveness: goal-conducive (+0.18 on -1..1)\n- coping potential: high coping (+0.30 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: theta power, frontal: high; gamma power, frontal: low; gamma power, temporal: low. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 16%, happy 16%, neutral 15%.\nPredicted emotion: disgust (confidence 16%).",
+   "text": "The network's most likely class was disgust (confidence 16%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 55,
+  "A": {
+   "facts": "Top class probabilities: happy 19%, fear 17%, anger 16%.\nPredicted emotion: happy (confidence 19%).",
+   "text": "The network's most likely class was happy (confidence 19%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, temporal: low\n- gamma power, frontal: high\naffective state:\n- valence: negative (unpleasant) (0.45 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.51 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.05 on -1..1)\n- coping potential: high coping (+0.18 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 56,
+  "A": {
+   "facts": "Top class probabilities: disgust 17%, happy 17%, fear 17%.\nPredicted emotion: disgust (confidence 17%).",
+   "text": "The network's most likely class was disgust (confidence 17%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- all regions typical\naffective state:\n- valence: positive (pleasant) (0.57 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.60 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.20 on -1..1)\n- coping potential: high coping (+0.32 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: all regions typical. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 57,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- all regions typical\naffective state:\n- valence: positive (pleasant) (0.53 on 0-1)\n- arousal: low (0.49 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.57 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.12 on -1..1)\n- coping potential: high coping (+0.27 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: all regions typical. This pattern was read as positive valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: anger 21%, tenderness 16%, sadness 16%.\nPredicted emotion: anger (confidence 21%).",
+   "text": "The network's most likely class was anger (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 58,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, temporal: low\naffective state:\n- valence: positive (pleasant) (0.54 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.57 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.15 on -1..1)\n- coping potential: high coping (+0.29 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: theta power, temporal: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 24%, tenderness 18%, fear 14%.\nPredicted emotion: happy (confidence 24%).",
+   "text": "The network's most likely class was happy (confidence 24%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 59,
+  "A": {
+   "facts": "Top class probabilities: sadness 22%, anger 19%, neutral 18%.\nPredicted emotion: sadness (confidence 22%).",
+   "text": "The network's most likely class was sadness (confidence 22%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: high\n- alpha power, frontal: high\n- alpha power, temporal: high\n- alpha power, parieto-occipital: high\n- gamma power, frontal: high\n- gamma power, temporal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: positive (pleasant) (0.58 on 0-1)\n- arousal: high (0.55 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.63 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.14 on -1..1)\n- goal conduciveness: goal-conducive (+0.24 on -1..1)\n- coping potential: high coping (+0.34 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: high. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  }
+ },
+ {
+  "id": 60,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.38 on 0-1)\n- arousal: low (0.50 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.49 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.16 on -1..1)\n- coping potential: high coping (+0.11 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: theta power, temporal: low; theta power, parieto-occipital: low; alpha power, frontal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "Top class probabilities: sadness 18%, disgust 15%, fear 15%.\nPredicted emotion: sadness (confidence 18%).",
+   "text": "The network's most likely class was sadness (confidence 18%). No intermediate evidence is available for this model.",
+   "emotion": "sadness"
+  }
+ },
+ {
+  "id": 61,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.38 on 0-1)\n- arousal: high (0.50 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.49 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.18 on -1..1)\n- goal conduciveness: goal-obstructive (-0.16 on -1..1)\n- coping potential: high coping (+0.11 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: alpha power, frontal: low; alpha power, parieto-occipital: low; gamma power, frontal: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 21%, happy 19%, tenderness 18%.\nPredicted emotion: fear (confidence 21%).",
+   "text": "The network's most likely class was fear (confidence 21%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 62,
+  "A": {
+   "facts": "Top class probabilities: neutral 26%, happy 21%, sadness 17%.\nPredicted emotion: neutral (confidence 26%).",
+   "text": "The network's most likely class was neutral (confidence 26%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: positive (pleasant) (0.52 on 0-1)\n- arousal: high (0.55 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.60 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.15 on -1..1)\n- goal conduciveness: goal-conducive (+0.11 on -1..1)\n- coping potential: high coping (+0.27 on -1..1)\nPredicted emotion: happy (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with happy (confidence 15%).",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 63,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.39 on 0-1)\n- arousal: high (0.51 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.51 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.18 on -1..1)\n- goal conduciveness: goal-obstructive (-0.15 on -1..1)\n- coping potential: high coping (+0.12 on -1..1)\nPredicted emotion: sadness (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with sadness (confidence 15%).",
+   "emotion": "sadness"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 31%, tenderness 12%, sadness 12%.\nPredicted emotion: disgust (confidence 31%).",
+   "text": "The network's most likely class was disgust (confidence 31%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 64,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.11 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.37 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.25 on -1..1)\n- goal conduciveness: goal-obstructive (-0.56 on -1..1)\n- coping potential: low coping (-0.21 on -1..1)\nPredicted emotion: disgust (confidence 18%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; alpha power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 18%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 31%, happy 17%, fear 14%.\nPredicted emotion: disgust (confidence 31%).",
+   "text": "The network's most likely class was disgust (confidence 31%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 65,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- gamma power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.47 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.51 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.14 on -1..1)\n- goal conduciveness: goal-conducive (+0.01 on -1..1)\n- coping potential: high coping (+0.21 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: gamma power, temporal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 28%, happy 19%, neutral 18%.\nPredicted emotion: fear (confidence 28%).",
+   "text": "The network's most likely class was fear (confidence 28%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 66,
+  "A": {
+   "facts": "Top class probabilities: disgust 31%, happy 18%, fear 12%.\nPredicted emotion: disgust (confidence 31%).",
+   "text": "The network's most likely class was disgust (confidence 31%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, temporal: high\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.09 on 0-1)\n- arousal: high (0.54 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.34 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.28 on -1..1)\n- goal conduciveness: goal-obstructive (-0.60 on -1..1)\n- coping potential: low coping (-0.25 on -1..1)\nPredicted emotion: disgust (confidence 18%).",
+   "text": "EEG evidence: theta power, temporal: high; theta power, parieto-occipital: low; alpha power, frontal: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 18%).",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 67,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.27 on 0-1)\n- arousal: high (0.50 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.44 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.21 on -1..1)\n- goal conduciveness: goal-obstructive (-0.36 on -1..1)\n- coping potential: low coping (-0.03 on -1..1)\nPredicted emotion: disgust (confidence 16%).",
+   "text": "EEG evidence: alpha power, frontal: low; alpha power, temporal: low; alpha power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 16%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 24%, happy 20%, disgust 16%.\nPredicted emotion: fear (confidence 24%).",
+   "text": "The network's most likely class was fear (confidence 24%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 68,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: negative (unpleasant) (0.23 on 0-1)\n- arousal: high (0.54 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.37 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.24 on -1..1)\n- goal conduciveness: goal-obstructive (-0.44 on -1..1)\n- coping potential: low coping (-0.09 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: alpha power, temporal: low; alpha power, parieto-occipital: low; gamma power, frontal: high. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: neutral 30%, disgust 19%, happy 16%.\nPredicted emotion: neutral (confidence 30%).",
+   "text": "The network's most likely class was neutral (confidence 30%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 69,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- gamma power, frontal: high\n- gamma power, temporal: high\n- gamma power, parieto-occipital: high\naffective state:\n- valence: positive (pleasant) (0.59 on 0-1)\n- arousal: high (0.69 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.57 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.18 on -1..1)\n- goal conduciveness: goal-conducive (+0.20 on -1..1)\n- coping potential: high coping (+0.32 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: gamma power, frontal: high; gamma power, temporal: high; gamma power, parieto-occipital: high. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 17%, anger 17%, sadness 16%.\nPredicted emotion: happy (confidence 17%).",
+   "text": "The network's most likely class was happy (confidence 17%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 70,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- gamma power, frontal: high\n- gamma power, temporal: high\naffective state:\n- valence: negative (unpleasant) (0.35 on 0-1)\n- arousal: high (0.54 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.45 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.20 on -1..1)\n- goal conduciveness: goal-obstructive (-0.23 on -1..1)\n- coping potential: high coping (+0.06 on -1..1)\nPredicted emotion: fear (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with fear (confidence 15%).",
+   "emotion": "fear"
+  },
+  "B": {
+   "facts": "Top class probabilities: anger 20%, happy 19%, neutral 18%.\nPredicted emotion: anger (confidence 20%).",
+   "text": "The network's most likely class was anger (confidence 20%). No intermediate evidence is available for this model.",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 71,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.22 on 0-1)\n- arousal: high (0.56 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.40 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.24 on -1..1)\n- goal conduciveness: goal-obstructive (-0.44 on -1..1)\n- coping potential: low coping (-0.10 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 19%, disgust 18%, anger 16%.\nPredicted emotion: fear (confidence 19%).",
+   "text": "The network's most likely class was fear (confidence 19%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 72,
+  "A": {
+   "facts": "Top class probabilities: disgust 23%, sadness 20%, happy 16%.\nPredicted emotion: disgust (confidence 23%).",
+   "text": "The network's most likely class was disgust (confidence 23%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- alpha power, frontal: low\n- alpha power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.46 on 0-1)\n- arousal: low (0.50 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.53 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.15 on -1..1)\n- goal conduciveness: goal-obstructive (-0.01 on -1..1)\n- coping potential: high coping (+0.20 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: alpha power, frontal: low; alpha power, temporal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 73,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- frontal alpha asymmetry (right minus left): low\naffective state:\n- valence: negative (unpleasant) (0.17 on 0-1)\n- arousal: low (0.46 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.39 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.23 on -1..1)\n- goal conduciveness: goal-obstructive (-0.48 on -1..1)\n- coping potential: low coping (-0.13 on -1..1)\nPredicted emotion: disgust (confidence 17%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; alpha power, frontal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, low coping, which is most consistent with disgust (confidence 17%).",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "Top class probabilities: fear 24%, happy 22%, neutral 20%.\nPredicted emotion: fear (confidence 24%).",
+   "text": "The network's most likely class was fear (confidence 24%). No intermediate evidence is available for this model.",
+   "emotion": "fear"
+  }
+ },
+ {
+  "id": 74,
+  "A": {
+   "facts": "Top class probabilities: disgust 25%, happy 20%, tenderness 15%.\nPredicted emotion: disgust (confidence 25%).",
+   "text": "The network's most likely class was disgust (confidence 25%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.44 on 0-1)\n- arousal: high (0.54 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.53 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.17 on -1..1)\n- goal conduciveness: goal-obstructive (-0.05 on -1..1)\n- coping potential: high coping (+0.18 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with high arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 75,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- theta power, temporal: high\n- theta power, parieto-occipital: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.33 on 0-1)\n- arousal: low (0.49 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.50 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.18 on -1..1)\n- goal conduciveness: goal-obstructive (-0.23 on -1..1)\n- coping potential: high coping (+0.07 on -1..1)\nPredicted emotion: fear (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; theta power, temporal: high; theta power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with fear (confidence 15%).",
+   "emotion": "fear"
+  },
+  "B": {
+   "facts": "Top class probabilities: disgust 30%, happy 18%, anger 14%.\nPredicted emotion: disgust (confidence 30%).",
+   "text": "The network's most likely class was disgust (confidence 30%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  }
+ },
+ {
+  "id": 76,
+  "A": {
+   "facts": "Top class probabilities: neutral 32%, happy 21%, disgust 13%.\nPredicted emotion: neutral (confidence 32%).",
+   "text": "The network's most likely class was neutral (confidence 32%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.41 on 0-1)\n- arousal: low (0.47 on 0-1)\n- dominance [pseudo-label, exploratory]: low (0.48 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.16 on -1..1)\n- goal conduciveness: goal-obstructive (-0.12 on -1..1)\n- coping potential: high coping (+0.14 on -1..1)\nPredicted emotion: anger (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with anger (confidence 15%).",
+   "emotion": "anger"
+  }
+ },
+ {
+  "id": 77,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: low\n- theta power, temporal: low\n- theta power, parieto-occipital: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- alpha power, parieto-occipital: low\n- gamma power, frontal: low\n- gamma power, temporal: low\n- gamma power, parieto-occipital: low\naffective state:\n- valence: negative (unpleasant) (0.46 on 0-1)\n- arousal: low (0.49 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.53 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.15 on -1..1)\n- goal conduciveness: goal-obstructive (-0.01 on -1..1)\n- coping potential: high coping (+0.20 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: low; theta power, temporal: low; theta power, parieto-occipital: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: neutral 27%, disgust 18%, happy 16%.\nPredicted emotion: neutral (confidence 27%).",
+   "text": "The network's most likely class was neutral (confidence 27%). No intermediate evidence is available for this model.",
+   "emotion": "neutral"
+  }
+ },
+ {
+  "id": 78,
+  "A": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, frontal: high\n- gamma power, temporal: low\naffective state:\n- valence: negative (unpleasant) (0.42 on 0-1)\n- arousal: low (0.43 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.50 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.14 on -1..1)\n- goal conduciveness: goal-obstructive (-0.08 on -1..1)\n- coping potential: high coping (+0.16 on -1..1)\nPredicted emotion: neutral (confidence 15%).",
+   "text": "EEG evidence: theta power, frontal: high; gamma power, temporal: low. This pattern was read as negative valence with low arousal. The situation was appraised as novel/unexpected, goal-obstructive, high coping, which is most consistent with neutral (confidence 15%).",
+   "emotion": "neutral"
+  },
+  "B": {
+   "facts": "Top class probabilities: happy 19%, fear 19%, disgust 17%.\nPredicted emotion: happy (confidence 19%).",
+   "text": "The network's most likely class was happy (confidence 19%). No intermediate evidence is available for this model.",
+   "emotion": "happy"
+  }
+ },
+ {
+  "id": 79,
+  "A": {
+   "facts": "Top class probabilities: disgust 19%, happy 19%, anger 17%.\nPredicted emotion: disgust (confidence 19%).",
+   "text": "The network's most likely class was disgust (confidence 19%). No intermediate evidence is available for this model.",
+   "emotion": "disgust"
+  },
+  "B": {
+   "facts": "EEG band power (relative to this person's own baseline):\n- theta power, temporal: low\n- alpha power, frontal: low\n- alpha power, temporal: low\n- gamma power, frontal: low\n- gamma power, temporal: low\naffective state:\n- valence: positive (pleasant) (0.57 on 0-1)\n- arousal: high (0.53 on 0-1)\n- dominance [pseudo-label, exploratory]: high (0.61 on 0-1)\nappraisal:\n- novelty: novel/unexpected (+0.13 on -1..1)\n- goal conduciveness: goal-conducive (+0.20 on -1..1)\n- coping potential: high coping (+0.32 on -1..1)\nPredicted emotion: tenderness (confidence 16%).",
+   "text": "EEG evidence: theta power, temporal: low; alpha power, frontal: low; alpha power, temporal: low. This pattern was read as positive valence with high arousal. The situation was appraised as novel/unexpected, goal-conducive, high coping, which is most consistent with tenderness (confidence 16%).",
+   "emotion": "tenderness"
+  }
+ }
+]

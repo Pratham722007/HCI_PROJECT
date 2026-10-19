@@ -78,3 +78,7 @@ data/raw/faced/
 reports/faced_inspection.json
 third_party/
 *.ckpt
+logs/
+runs/
+.venv-gpu/
+reports/*/human_eval/key_PRIVATE.json

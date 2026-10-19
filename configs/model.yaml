@@ -2,7 +2,7 @@
 
 encoder:
   name: "EEGPT"
-  pretrained_weights: "checkpoints/eegpt_mcae_58chs_4s_large4E.ckpt"
+  pretrained_weights: "checkpoints/EEGPT/checkpoint/eegpt_mcae_58chs_4s_large4E.ckpt"
   embedding_dim: 2048   # 4 summary tokens x 512, mean-pooled over 16 time patches (docs/EEGPT_REQUIREMENTS.md)
   freeze: true
 
@@ -35,3 +35,19 @@ explain:
   qwen_model_name: "Qwen/Qwen2.5-1.5B-Instruct"
   quantization: "4bit"
   max_tokens: 128
+
+# ---- Phase 5 training (FACED only; tuned on FACED validation folds, never on DEAP/DREAMER) ----
+training:
+  n_classes: 7
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  dropout: 0.1
+  batch_size: 256
+  max_epochs: 80
+  patience: 10                 # early stopping on validation macro-F1
+  dominance_weight: 0.25       # D3: pseudo-label, down-weighted
+  loss_weights: {l1: 1.0, l2: 1.0, l3: 1.0, emotion: 1.0}
+  escalation_coverage: 0.80    # threshold keeps 80% of FACED validation windows; the rest are escalated
+  search:                      # small documented grid (scripts/train.py --search), chosen by mean 5-fold val macro-F1
+    lr: [1.0e-3, 3.0e-4]
+    dropout: [0.1, 0.3]

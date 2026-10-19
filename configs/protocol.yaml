@@ -99,3 +99,10 @@ preprocessing:
   artifact_min_uv: 100.0
   windows_drop_from: "start" # FACED: 30 s -> 7 x 4 s windows; the first 2 s of each clip are discarded
   zscore: "per_subject_per_channel_over_non_rejected_windows"
+
+# ---- Phase 4 (19 Oct 2026, before any training) ----
+# D11: FACED rater reliability. Per subject, Pearson r between their 28 valence ratings and the per-clip mean valence of
+# the other train/val subjects (test group never defines the norm). r < min_r -> valence/arousal loss masked in training
+# (window kept for every other loss). Evaluation always uses all test subjects; flagged test subjects listed in reports.
+rater_reliability:
+  min_r: 0.5
