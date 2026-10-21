@@ -1,0 +1,41 @@
+# FaithScore (tag `dens12`, explainer `qwen`)
+
+
+
+Signal (a) = SST-2 sentiment label flips in the expected direction; (b) = explanation uses the new valence term. Placebo = L1 text-only change, any polarity change is a false positive. CI = subject bootstrap.
+
+| dataset | model | perturbation | n | rate (a) [95% CI] | rate (b) [95% CI] |
+|---|---|---|---|---|---|
+| deap | CBM | valence flip (FaithScore) | 30 | 0.367 [0.185, 0.556] | 0.667 [0.500, 0.806] |
+| deap | CBM | L1 placebo (false-positive rate) | 30 | 0.300 [0.156, 0.481] | 0.500 [0.345, 0.654] |
+| deap | flat | class-valence flip (FaithScore) | 30 | 0.833 [0.677, 0.967] | 0.067 [0.000, 0.167] |
+| dens | CBM | valence flip (FaithScore) | 96 | 0.604 [0.518, 0.699] | 0.812 [0.748, 0.885] |
+| dens | CBM | L1 placebo (false-positive rate) | 96 | 0.302 [0.207, 0.410] | 0.469 [0.393, 0.530] |
+| dens | flat | class-valence flip (FaithScore) | 96 | 0.781 [0.716, 0.874] | 0.062 [0.010, 0.119] |
+
+The flat baseline has no concepts; its perturbation flips the class summary instead (asymmetry, see limitations).
+Judge reliability: fill `human_faithful` (1/0) in `faithscore_manual_labels.csv`, then run `scripts/faithscore_agreement.py --tag dens12`.
+
+## Examples
+
+**dens row 196** (true happy, CBM fear -> flip happy)
+
+- original: The system detected increased frontal alpha asymmetry, indicating heightened emotional processing in the right hemisphere relative to the left. This suggests a more intense emotional response. The valence of the affective state was rated as negative, suggesting unpleasantness. High arousal and high dominance further support an emotionally charged experience. The appraisal showed novelty as positive but goal conduciveness as obstructive, implying difficulty in achieving goals despite new stimuli. Low coping potential indicates limited ability to manage these emotions effectively. These factors collectively point towards a fearful reaction due to the combination of negative valence, high arousal, and difficulties in managing the situation.
+- valence flipped: The system detected increased frontal alpha asymmetry, indicating heightened emotional engagement and positivity in the right hemisphere relative to the left. The valence score of 0.88 for pleasantness suggests strong positive emotions. High arousal levels indicate excitement or enthusiasm. The high dominance score indicates a dominant emotional experience with no significant oppositional states. The appraisals highlight novelty as novel and unexpected, goal conduciveness suggesting clear direction towards goals, and high coping potential showing effective strategies for dealing with challenges. These factors collectively point toward a prediction of happiness due to the combination of positive valence, high arousal, and overall positive emotional engagement.
+- placebo: The system detected high gamma power in the parieto-occipital region and significant frontal alpha asymmetry, both of which suggest heightened cognitive processing and possibly increased alertness or awareness. The negative affective state with high valence and arousal indicates discomfort or distress. The high dominance suggests strong emotional engagement. The novelty detection points towards unexpected stimuli, while goal conduciveness being obstructive implies difficulty in achieving goals. Low coping potential further supports a negative emotional response. These factors collectively point toward a fearful reaction due to the combination of heightened alertness, discomfort, and difficulties in dealing with the situation.
+
+**dens row 260** (true happy, CBM happy -> flip fear)
+
+- original: The system detected high levels of theta activity in the frontal and temporal lobes, indicating a relaxed yet alert state associated with calmness and attentiveness. The high gamma power in both frontal and temporal areas suggests enhanced cognitive processing and connectivity between different brain regions. The significant frontal alpha asymmetry indicates a balanced activation pattern, which is often linked to positive emotions like happiness.
+
+Additionally, the high arousal level and positive affect suggest heightened emotional engagement and pleasant experiences. The novelty detection shows interest in new stimuli, while the goal conduciveness and high coping potential indicate readiness for challenges and effective problem-solving strategies. These factors collectively point towards a prediction of happiness as
+- valence flipped: The system detected heightened theta activity in the frontal and temporal lobes, indicating a sense of unease or anxiety. The high gamma power in these areas suggests enhanced cognitive processing and possibly increased alertness or vigilance. The significant frontal alpha asymmetry indicates a split attention pattern, favoring one side over the other, which could be interpreted as a defensive stance. The negative affective state with high arousal and low dominance suggest discomfort or distress. The novelty detection is positive but goal-conduciveness is negative, suggesting obstacles to achieving goals. These factors collectively point towards a fearful response due to perceived threats or challenges, leading to the prediction of fear
+- placebo: The system detected high levels of theta activity in the frontal and temporal lobes, indicating a relaxed yet alert state associated with calmness and attentiveness. The high gamma power across multiple frequency bands suggests synchronized neural activity, likely reflecting coherent processing and integration of sensory information. The significant frontal alpha asymmetry indicates enhanced right hemisphere function relative to the left, which is often linked to creativity and positive emotions like happiness.
+
+The positive affective state with high valence and arousal levels further supports a pleasant emotional experience. The high dominance score for exploratory behavior suggests proactive engagement in new situations, aligning well with the prediction of "happy." The novelty and
+
+**dens row 1516** (true surprise, CBM anger -> flip happy)
+
+- original: The system detected heightened arousal and negative valence in the frontal region during Level 2 of the analysis. These factors suggest an emotional state characterized by unpleasantness and a sense of threat or frustration. The high level of novelty perception indicates that the individual encountered something unexpected, which could trigger feelings of surprise or annoyance. Additionally, the appraised goal conduciveness as obstructive suggests that there was a perceived obstacle to achieving a desired outcome, potentially leading to frustration or anger. Given these combined cues—high arousal, negative valence, and obstructive goal conduciveness—the system inferred that the most likely emotion is anger, aligning with the confidence score
+- valence flipped: The system detected increased gamma power in the frontal region at Level 1, indicating heightened cognitive processing and synchronization of neural activity. At Level 2, the affective state was characterized by a pleasant valence score of 0.69 and high arousal with a score of 0.77, suggesting emotional engagement and excitement. The dominant trait showed high novelty perception with a score of +0.74, indicating new experiences were perceived positively. Additionally, the appraisals highlighted goal conduciveness with a score of +0.49, which suggests the individual is motivated towards achieving goals. These factors collectively point toward a positive
+- placebo: The system detected increased gamma power in the frontal and parieto-occipital regions during Level 2 of the analysis, indicating heightened emotional processing and possibly stress or anxiety. The negative valence and high arousal suggest discomfort or displeasure, which aligns with anger as a likely emotion. The high dominance suggests strong emotional engagement, consistent with anger being a dominant emotion. Additionally, the novelty was considered novel and unexpected, while goal conduciveness was obstructive, suggesting frustration or annoyance rather than satisfaction. These factors combined led to the prediction of anger with confidence at 17%.

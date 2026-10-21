@@ -1,6 +1,6 @@
 # H-CBM-EEG: Progress Log
 
-Last updated: 20 Oct 2026. Plan: [research-plan.md](research-plan.md) (rev 3). Decisions: [docs/DEVIATIONS.md](docs/DEVIATIONS.md).
+Last updated: 21 Oct 2026. Plan: [research-plan.md](research-plan.md) (rev 3). Decisions: [docs/DEVIATIONS.md](docs/DEVIATIONS.md).
 
 ## Status at a glance
 
@@ -11,14 +11,14 @@ Last updated: 20 Oct 2026. Plan: [research-plan.md](research-plan.md) (rev 3). D
 | Preprocessing + unified HDF5 windows (DEAP, DREAMER, FACED, DENS) | Done |
 | EEGPT encoder (real checkpoint, strict load, GPU) | Done (20 Oct) |
 | Concept targets L1/L2/L3 | Done for DENS, DEAP, DREAMER (L3 = draft appraisal table) |
-| Models (H-CBM, 5 variants + flat baseline), training, evaluation, HITL, explanations, human-eval tooling | Code done and tested; **not yet run on real DENS embeddings** |
+| Models (H-CBM, 5 variants + flat baseline), training, evaluation, HITL, explanations, human-eval tooling | Done and run on real DENS embeddings (Day 2) |
 | **Rev 3 Day 1** (DENS in, pipeline made dataset-agnostic, embeddings) | **Done (20 Oct)** |
-| Rev 3 Day 2 (training, Sim 1-3, HITL, Qwen + FaithScore) | Next |
-| Rev 3 Day 3 (human-eval materials, results summary, deck edits) | Pending |
+| **Rev 3 Day 2** (training, Sim 1-3, HITL, Qwen + FaithScore, human-eval set) | **Done (21 Oct)**; your 20 manual FaithScore labels still needed |
+| Rev 3 Day 3 (pilot rating form, results summary, deck edits) | Next |
 | Human evaluation with real raters | Not started (raters/ethics not arranged) |
 
-No research results exist yet. Everything run so far is either data QC, a Gate-3 probe, or a placeholder/smoke run that
-only checks the plumbing.
+First real results exist (Day 2, `reports/dens12/`). They are weak: the 12-channel EEGPT embeddings carry little emotion
+signal, and most hypotheses are not supported. The pipeline itself is complete.
 
 ---
 
@@ -34,7 +34,8 @@ only checks the plumbing.
 | 20 Oct | `bf40e80` | Phase 3-4 code committed |
 | 20 Oct | — | Real EEGPT checkpoint downloaded and verified; GPU environment (`.venv-gpu`) working |
 | 20 Oct | — | Plan rev 3: **DENS trains, DEAP/DREAMER test, FACED deferred**, 3-day implementation target |
-| 20 Oct | uncommitted | Rev 3 Day 1 implemented (below) |
+| 20 Oct | `cc77072` | Rev 3 Day 1 implemented (below) |
+| 21 Oct | uncommitted | Rev 3 Day 2: training fix (D24), full run on DENS → DEAP/DREAMER, leakage audit test |
 
 ---
 
@@ -90,6 +91,57 @@ pipeline, not strong results. Source: [reports/probe_dens_dens12.json](reports/p
 
 ---
 
+## Rev 3 Day 2 (21 Oct): what was done
+
+| Task | Result |
+|---|---|
+| Day 1 leftovers | QC regenerated; input scale re-chosen (0.1) and embeddings recreated |
+| Training fix (D24) | The hyperparameter search showed the CBM stuck predicting one class: with ~1,200 training windows, batch 256 gave 5 updates/epoch and early stopping fired before the 4-stage chain learned. Now: batch 64, 30-epoch warm-up before checkpoint selection, patience 20, max 200 epochs, same for every model. Diagnosed on validation folds only; new test `test_fit_respects_warmup` |
+| 2.1 Training | Flat + 5 CBM variants x 5 folds (`runs/dens12/`). Chosen by val macro-F1: flat lr 1e-3 / dropout 0.3, CBM lr 1e-3 / dropout 0.1 |
+| 2.2 In-corpus, Sim 1, Sim 3 | `reports/dens12/{in_corpus,sim1,sim_ablation}.md`, `results.csv` |
+| 2.3 HITL | `reports/dens12/hitl.md` + figures |
+| 2.4 Sim 2 FaithScore | Qwen2.5-1.5B on the GPU (~2 s per explanation), 96 DENS + 30 DEAP windows, 5 explanations each: `faithscore.md`, `explanations.jsonl` |
+| Human-eval materials | 126 blinded pairs, offline form `reports/dens12/human_eval/rater_form.html`; dry-run analysis `human_eval_DRYRUN.md` |
+| Gate 2 leakage audit | `tests/test_leakage.py`: training, model selection, temperature/threshold and scale choice read only embeddings from DEAP/DREAMER. **42/42 tests pass** |
+
+### Headline results (all weak; nothing below is a positive finding)
+
+**In-corpus, DENS test subjects (8), 6 classes, chance macro-F1 0.167:**
+
+| Model | Macro-F1 [95% CI] |
+|---|---|
+| flat | 0.100 [0.071, 0.120] |
+| level1_only | 0.127 [0.096, 0.146] |
+| level12 | 0.117 [0.072, 0.147] |
+| **level123 (main CBM)** | **0.135 [0.069, 0.180]** |
+| level123_l2 | 0.135 [0.096, 0.158] |
+| bypass | 0.104 [0.070, 0.131] |
+
+All models are below chance on the test subjects (validation macro-F1 was ~0.21). H1 (CBM within 2 pp of flat): CBM - flat
+= +0.034 [-0.023, +0.090]; non-inferiority not shown because the CI is wide.
+
+**Sim 1, zero-shot DEAP/DREAMER:** valence/arousal accuracy 0.46-0.63 for every model, close to the majority rate. The CBM
+is **not** significantly better than flat on any valence/arousal metric (H2 not supported).
+
+**Sim 2, FaithScore (valence flipped, explanation regenerated):**
+
+| | CBM, judge (a) sentiment | CBM, judge (b) valence word | Flat, judge (a) | Flat, judge (b) |
+|---|---|---|---|---|
+| DENS | 0.60 [0.52, 0.70] | 0.81 [0.75, 0.89] | 0.78 [0.72, 0.87] | 0.06 [0.01, 0.12] |
+| DEAP | 0.37 [0.19, 0.56] | 0.67 [0.50, 0.81] | 0.83 [0.68, 0.97] | 0.07 [0.00, 0.17] |
+| Placebo false-positive rate (CBM, DENS) | 0.30 [0.21, 0.41] | 0.47 [0.39, 0.53] | | |
+
+H3 is not supported: the placebo rate is far above 15%, so Qwen changes its wording even when nothing relevant changed, and
+the two judges disagree. Qwen also mislabels valence in some explanations (e.g. "negative affective state with high
+valence"). Judge reliability needs your 20 manual labels.
+
+**HITL:** correcting concepts raises accuracy (DENS: L2 0.16 → 0.40; L3 pseudo-expert → 0.89, which leaks the class by
+construction; L1 → 0.24). Uncertainty-ordered correction is not better than random. Escalation: on DENS validation, low
+confidence does flag errors, but on the DENS test group it does not (H5 not supported there); temperature scaling cuts
+ECE from ~0.6 to ~0.05-0.07.
+
+---
+
 ## Pipeline components (code)
 
 | Component | Files |
@@ -132,10 +184,12 @@ Day 1 from scratch (from the project root):
 PY=".venv-gpu/bin/python -E -P" DEVICE=cuda STOP_AFTER=embed scripts/run_all.sh
 .venv/bin/pytest -q
 ```
-Day 2 (everything after embeddings):
+Day 2 (everything after embeddings; ~25 min on the GPU, most of it Qwen):
 ```bash
 PY=".venv-gpu/bin/python -E -P" DEVICE=cuda scripts/run_all.sh
 ```
+Then label 20 FaithScore pairs: fill `human_faithful` (1/0) in `reports/dens12/faithscore_manual_labels.csv` and run
+`.venv/bin/python -E -P scripts/faithscore_agreement.py --tag dens12`.
 
 ---
 
@@ -143,7 +197,7 @@ PY=".venv-gpu/bin/python -E -P" DEVICE=cuda scripts/run_all.sh
 
 1. **Confirm the 6-class mapping** (DENS group 3 alarmed/startled/tense → surprise; group 7 incl. "taken aback" → sadness).
 2. **Approve the Level-3 appraisal profiles** (`configs/appraisal_profiles.yaml`, `dens` section; currently a draft).
-3. **Commit Day 1** (all rev 3 changes are uncommitted).
+3. **Label the 20 FaithScore pairs** (judge reliability) and **commit Day 2**.
 4. **Raters:** at least 3 for the human evaluation, and whether ethics approval is needed.
 5. **EGI → 10-10 mapping:** T7/T8 are about 7° off; confirm against EGI's equivalence chart.
 6. **DEAP:** re-download from the official source before publication.
@@ -152,6 +206,7 @@ PY=".venv-gpu/bin/python -E -P" DEVICE=cuda scripts/run_all.sh
 ## Known limitations so far
 - DENS is small (475 epochs) and its labels are click-localised self-reports; DEAP/DREAMER labels are whole-trial ratings.
 - Large shift between datasets (QC domain classifier 0.68 vs 0.33 chance).
-- Weak emotion signal in 12-channel EEGPT embeddings (Gate 1 probe).
+- Weak emotion signal in 12-channel EEGPT embeddings (Gate 1 probe; Day 2 models below chance on DENS test subjects).
+- High FaithScore placebo rate: the automatic judges and/or Qwen 1.5B are not reliable enough yet.
 - Level 3 is a category pseudo-label, so correcting it in the intervention experiment leaks the class.
 - Qwen 1.5B was seen ignoring the supplied facts in a test (wrote "positive" for a negative valence); FaithScore measures this.

@@ -35,9 +35,10 @@ def word_valence(v):
     return "positive (pleasant)" if v > 0.5 else "negative (unpleasant)"
 
 
-def l2_words(l2):
+def l2_words(l2, dominance_pseudo=False):
+    dom = "dominance [pseudo-label, exploratory]" if dominance_pseudo else "dominance"   # pseudo only for FACED (D3)
     return [("valence", word_valence(l2[0]), l2[0]), ("arousal", "high" if l2[1] > 0.5 else "low", l2[1]),
-            ("dominance [pseudo-label, exploratory]", "high" if l2[2] > 0.5 else "low", l2[2])]
+            (dom, "high" if l2[2] > 0.5 else "low", l2[2])]
 
 
 def l3_words(l3):
@@ -46,13 +47,13 @@ def l3_words(l3):
     return [(n, hi if v > 0 else lo, v) for (n, hi, lo), v in zip(names, l3)]
 
 
-def cbm_facts(rec, concept_names, l1_override=None):
+def cbm_facts(rec, concept_names, l1_override=None, dominance_pseudo=False):
     l1 = l1_summary(rec["l1"], concept_names)
     if l1_override:
         l1 = [(n, l1_override.get(n, b), z) for n, b, z in l1]
     lines = ["Level 1, EEG band power (relative to this person's own baseline):"]
     lines += [f"- {n}: {b}" for n, b, _ in l1 if b != "typical"] or ["- all regions typical"]
-    lines += ["Level 2, affective state:"] + [f"- {n}: {w} ({v:.2f} on 0-1)" for n, w, v in l2_words(rec["l2"])]
+    lines += ["Level 2, affective state:"] + [f"- {n}: {w} ({v:.2f} on 0-1)" for n, w, v in l2_words(rec["l2"], dominance_pseudo)]
     lines += ["Level 3, appraisal:"] + [f"- {n}: {w} ({v:+.2f} on -1..1)" for n, w, v in l3_words(rec["l3"])]
     lines += [f"Predicted emotion: {rec['emotion']} (confidence {rec['confidence']:.0%})."]
     return "\n".join(lines)

@@ -79,7 +79,7 @@ for variant in a.variants.split(","):
         t0 = time.time(); tr, va = fold_rows(k); fix_seed(a.seed)
         model, hist = fit(runs.build_model(variant, emb_dim, mcfg, hp), F, tr, va, hp, a.seed)
         pv = predict(model, F["E"][va])
-        T = fit_temperature(pv["logits"], F["emotion"][va])
+        T = fit_temperature(pv["logits"], F["emotion"][va], t_max=HP.get("max_temperature", 10.0))
         thr = escalation_threshold(softmax(pv["logits"], T).max(1), HP["escalation_coverage"])
         runs.save_fold(os.path.join(vdir, f"fold{k}.pt"), model, hp, emb_dim, T, thr, hist)
         out = {}

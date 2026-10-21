@@ -1,5 +1,7 @@
 """Joint training: w1*L1 + w2*L2 (masked; dominance down-weighted) + w3*L3 + w4*CE(emotion), early stopping on
-validation macro-F1. The flat baseline uses only the CE term."""
+validation macro-F1 after a warm-up of `min_epochs` (checkpoints before it are never selected: on small corpora such as
+DENS an untrained network can score a higher macro-F1 than the first epochs of the 4-stage chain). The flat baseline uses
+only the CE term."""
 import copy
 
 import numpy as np
@@ -73,6 +75,8 @@ def fit(model, D, tr, va, hp, seed=42, log=None):
         hist.append(dict(epoch=ep, train_loss=tot / len(tr), val_macro_f1=f1))
         if log:
             log(f"  ep {ep:3d} loss {tot / len(tr):.4f} val_f1 {f1:.4f}")
+        if ep + 1 < hp.get("min_epochs", 0):
+            continue                                                 # warm-up: no selection, no early stopping
         if f1 > best_f1 + 1e-4:
             best_f1, best, bad = f1, copy.deepcopy(model.state_dict()), 0
         else:

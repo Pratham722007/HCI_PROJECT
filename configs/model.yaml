@@ -34,7 +34,7 @@ baseline_flat_mlp:
 explain:
   qwen_model_name: "Qwen/Qwen2.5-1.5B-Instruct"
   quantization: "4bit"
-  max_tokens: 128
+  max_tokens: 256              # rev 3: 128 (and 192) cut explanations mid-sentence
 
 # ---- Phase 5 training (FACED only; tuned on FACED validation folds, never on DEAP/DREAMER) ----
 training:
@@ -42,12 +42,14 @@ training:
   lr: 1.0e-3
   weight_decay: 1.0e-4
   dropout: 0.1
-  batch_size: 256
-  max_epochs: 80
-  patience: 10                 # early stopping on validation macro-F1
+  batch_size: 64               # rev 3 (D24): DENS has ~1,200 training windows; 256 gave only 5 updates per epoch
+  max_epochs: 200
+  min_epochs: 30               # D24: warm-up; no checkpoint selection or early stopping before it
+  patience: 20                 # early stopping on validation macro-F1 (after warm-up)
   dominance_weight: 1.0        # rev 3: DENS dominance is a real rating (D3 pseudo-label applied to FACED only)
   loss_weights: {l1: 1.0, l2: 1.0, l3: 1.0, emotion: 1.0}
-  escalation_coverage: 0.80    # threshold keeps 80% of FACED validation windows; the rest are escalated
+  escalation_coverage: 0.80    # threshold keeps 80% of validation windows; the rest are escalated
+  max_temperature: 10.0        # D25: temperature clipped to [0.1, 10]
   search:                      # small documented grid (scripts/train.py --search), chosen by mean 5-fold val macro-F1
     lr: [1.0e-3, 3.0e-4]
     dropout: [0.1, 0.3]

@@ -65,3 +65,15 @@ def test_intervention_mask_fraction_and_eligibility():
         assert (m.sum(1) == round(frac * 36)).all() and not m[:, 0].any()
     m = intervention_mask("l2", np.array([[0.51, 0.9, 0.1]]), np.ones((1, 3), bool), 1 / 3, "uncertainty", rng)
     assert m.tolist() == [[True, False, False]]                       # closest to the 0.5 boundary first
+
+
+def test_fit_respects_warmup():
+    from hcbm.train.trainer import fit
+    rng = np.random.default_rng(0)
+    n = 60
+    D = dict(E=rng.normal(size=(n, 16)).astype("float32"), emotion=np.arange(n) % 6, l1=np.zeros((n, 37), "float32"),
+             l2=np.full((n, 3), 0.5, "float32"), l2_train_mask=np.ones((n, 3), bool), l3=np.zeros((n, 3), "float32"))
+    hp = dict(n_classes=6, lr=1e-3, weight_decay=0.0, batch_size=16, max_epochs=12, min_epochs=8, patience=1,
+              dominance_weight=1.0, loss_weights=dict(l1=1.0, l2=1.0, l3=1.0, emotion=1.0))
+    _, hist = fit(FlatBaseline(16, hidden=8, n_classes=6), D, np.arange(40), np.arange(40, 60), hp)
+    assert len(hist) >= 8                                             # no early stop during warm-up

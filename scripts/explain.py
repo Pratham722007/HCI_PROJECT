@@ -32,6 +32,7 @@ mcfg = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))
 man = runs.manifest(ROOT, a.tag)
 out_dir = os.path.join(ROOT, "reports", a.tag); os.makedirs(out_dir, exist_ok=True)
 PRIMARY = man.get("primary", "faced")
+PSEUDO_DOM = PRIMARY == "faced"                               # FACED dominance is a pseudo-label (D3); DENS is real
 sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json")))
 F = tdata.load(ROOT, PRIMARY, a.tag)
 COARSE = F["meta"]["coarse_classes"]; CN = F["concept_names"]
@@ -89,8 +90,8 @@ for n, (ds, D, r) in enumerate(sample):
     pf = softmax(predict(flat, e)["logits"], ck_f["temperature"])[0]
     other = (proto_v > 0.5) != (proto_v[pf.argmax()] > 0.5)
     pf_flip = np.where(other, pf, 0); pf_flip = pf_flip / pf_flip.sum()
-    facts = dict(cbm=prompts.cbm_facts(rec, CN), cbm_flip=prompts.cbm_facts(rec_flip, CN),
-                 cbm_placebo=prompts.cbm_facts(rec, CN, placebo), flat=prompts.flat_facts(flat_record(pf)),
+    facts = dict(cbm=prompts.cbm_facts(rec, CN, dominance_pseudo=PSEUDO_DOM), cbm_flip=prompts.cbm_facts(rec_flip, CN, dominance_pseudo=PSEUDO_DOM),
+                 cbm_placebo=prompts.cbm_facts(rec, CN, placebo, dominance_pseudo=PSEUDO_DOM), flat=prompts.flat_facts(flat_record(pf)),
                  flat_flip=prompts.flat_facts(flat_record(pf_flip)))
     texts = {k: gen(f) for k, f in facts.items()}
     y = int(D["emotion"][r])
