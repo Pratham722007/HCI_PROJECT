@@ -6,6 +6,7 @@ import numpy as np
 import scipy.io as sio
 
 from hcbm.io.safe_pickle import load_numpy_pickle
+from hcbm.io import montage as M
 from hcbm.preprocess import pipeline as P
 
 RATING_ITEMS = ["joy", "tenderness", "inspiration", "amusement", "anger", "disgust", "fear", "sadness",
@@ -25,17 +26,17 @@ def load_ratings(rating_root, sub):
     return score[np.argsort(vid)]
 
 
-def process_subject(pkl_path, rating_root, cfg):
+def process_subject(pkl_path, rating_root, cfg, montage="shared"):
     """Return dict with windows (n,12,1024) float32, reject, trial_id, window_idx, labels."""
     sub = os.path.splitext(os.path.basename(pkl_path))[0]
     x = np.asarray(load_numpy_pickle(pkl_path), dtype=np.float64)           # (28, 32, 7500) uV
     assert x.shape == (28, 32, 7500), x.shape
     pp, fs = cfg["preprocessing"], cfg["fs"]
-    idx = [cfg["faced"]["shared_channel_idx"][c] for c in cfg["shared_channels"]]
-    x = x[:, idx, :]                                                         # (28, 12, 7500)
+    _, idx = M.channels(cfg, "faced", montage)
+    x = x[:, idx, :]                                                         # (28, 12 or 30, 7500)
     x = P.notch(x, cfg["faced"]["fs_native"], cfg["filtering"]["notch"], pp["notch_q"])
     x = P.bandpass(x, cfg["faced"]["fs_native"], *cfg["filtering"]["bandpass"], order=pp["filter_order"])
-    x = P.car(x)                                                             # CAR over the 12 channels
+    x = P.car(x)                                                             # CAR over the selected channels
     x = P.resample(x, cfg["faced"]["fs_native"], fs)                         # (28, 12, 7680)
     wins = np.stack([P.cut_windows(c, fs, cfg["window_length_sec"], pp["windows_drop_from"]) for c in x])  # (28, 7, 12, 1024)
     n_clip, n_win = wins.shape[:2]

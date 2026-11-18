@@ -66,8 +66,11 @@ split_seeds:
   held_out_test_ratio: 0.20
 
 # ---- Rev 2 decisions (16 Oct 2026, made before any training) ----
-primary_dataset: "dens"                       # rev 3 (20 Oct 2026): DENS trains; FACED deferred (rev 2 used "faced")
-cross_corpus_datasets: ["deap", "dreamer"]   # frozen, zero-shot, never used for tuning
+# Rev 3b (21 Oct 2026, D27): FACED trains; DENS joins DEAP/DREAMER as a frozen zero-shot test set. The rev 3 DENS run
+# (tag dens12) used primary_dataset "dens", cross ["deap", "dreamer"], class_set "dens6".
+primary_dataset: "faced"
+cross_corpus_datasets: ["dens", "deap", "dreamer"]   # frozen, zero-shot, never used for tuning
+class_set: "faced7"                                  # emotion_taxonomy.yaml class_sets
 faced:
   fs_native: 250
   clip_seconds: 30        # last 30 s of each clip (see reports/faced_inspection.md)
@@ -121,3 +124,13 @@ dens:
   # EGI HydroCel-128 electrode (1-based E-number) for each shared channel: nearest by angle after centring the MNE
   # GSN-HydroCel-129 and standard_1005 montages (research-plan.md 3.2). T7/T8 are ~7 deg off (EGI tables often say E45/E108).
   shared_channel_egi: {F7: 33, F3: 24, FC5: 34, T7: 39, P7: 58, O1: 70, O2: 83, P8: 96, T8: 115, FC6: 116, F4: 124, F8: 122}
+
+# ---- Rev 3c (22 Oct 2026, D28): full montage = FACED's 30 EEG channels (all in DEAP's 32 and EEGPT's vocabulary; DENS
+# mapped from EGI by nearest angle, mean 6.1 deg, max 13.1). DREAMER has only the 12 shared channels. Level-1 concepts stay
+# on the 12 shared channels (comparable explanations on every dataset).
+full_channels: [Fp1, Fp2, Fz, F3, F4, F7, F8, FC1, FC2, FC5, FC6, Cz, C3, C4, T7, T8, CP1, CP2, CP5, CP6, Pz, P3, P4, P7, P8, PO3, PO4, Oz, O1, O2]
+full_channel_idx:
+  faced: {Fp1: 0, Fp2: 1, Fz: 2, F3: 3, F4: 4, F7: 5, F8: 6, FC1: 7, FC2: 8, FC5: 9, FC6: 10, Cz: 11, C3: 12, C4: 13, T7: 14, T8: 15, CP1: 16, CP2: 17, CP5: 18, CP6: 19, Pz: 20, P3: 21, P4: 22, P7: 23, P8: 24, PO3: 25, PO4: 26, Oz: 27, O1: 28, O2: 29}
+  # DEAP channel order: Fp1 AF3 F3 F7 FC5 FC1 C3 T7 CP5 CP1 P3 P7 PO3 O1 Oz Pz Fp2 AF4 Fz F4 F8 FC6 FC2 Cz C4 T8 CP6 CP2 P4 P8 PO4 O2
+  deap: {Fp1: 0, F3: 2, F7: 3, FC5: 4, FC1: 5, C3: 6, T7: 7, CP5: 8, CP1: 9, P3: 10, P7: 11, PO3: 12, O1: 13, Oz: 14, Pz: 15, Fp2: 16, Fz: 18, F4: 19, F8: 20, FC6: 21, FC2: 22, Cz: 23, C4: 24, T8: 25, CP6: 26, CP2: 27, P4: 28, P8: 29, PO4: 30, O2: 31}
+  dens_egi: {Fp1: 22, Fp2: 14, Fz: 11, F3: 24, F4: 124, F7: 33, F8: 122, FC1: 13, FC2: 112, FC5: 34, FC6: 116, Cz: 7, C3: 36, C4: 104, T7: 39, T8: 115, CP1: 54, CP2: 79, CP5: 46, CP6: 102, Pz: 62, P3: 60, P4: 85, P7: 58, P8: 96, PO3: 66, PO4: 84, Oz: 75, O1: 70, O2: 83}

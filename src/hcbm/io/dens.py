@@ -47,15 +47,16 @@ def load_ratings(beh_root, subject):
     return out
 
 
-def process_subject(ep, beh_root, cfg, group_to_coarse):
+def process_subject(ep, beh_root, cfg, group_to_coarse, montage="shared"):
     """ep: index rows of ONE subject. Returns dict(X (n,12,1024) float32, reject, trial_id (=epoch seq.), window_idx, labels)."""
     dc, pp, fs = cfg["dens"], cfg["preprocessing"], cfg["fs"]
-    idx = [dc["shared_channel_egi"][c] - 1 for c in cfg["shared_channels"]]             # E-number -> row
+    from hcbm.io import montage as M
+    _, idx = M.channels(cfg, "dens", montage)                                         # E-number -> row
     x = np.stack([sio.loadmat(p)["data"] for p in ep["path"]]).astype(np.float64)        # (n_ep, 128, 1751) uV
     assert x.shape[1:] == (128, dc["epoch_samples"]), x.shape
     x = x[:, idx, :]
     x = P.bandpass(x, dc["fs_native"], *cfg["filtering"]["bandpass"], order=pp["filter_order"])   # effective 4-40 Hz
-    x = P.car(x)                                                                          # CAR over the 12 channels
+    x = P.car(x)                                                                          # CAR over the selected channels
     x = P.resample(x, dc["fs_native"], fs)                                                # (n_ep, 12, 1793)
     wins = np.stack([P.cut_windows_strided(e, fs, cfg["window_length_sec"], dc["window_stride_sec"], dc["windows_per_epoch"])
                      for e in x])                                                         # (n_ep, 4, 12, 1024)

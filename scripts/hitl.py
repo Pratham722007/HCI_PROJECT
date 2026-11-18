@@ -23,11 +23,13 @@ ap.add_argument("--n-boot", type=int, default=500)
 a = ap.parse_args()
 mcfg = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))
 man = runs.manifest(ROOT, a.tag)
+if man.get("finetune"):
+    sys.exit(f"{a.tag} is a fine-tuned run: {os.path.basename(__file__)} needs frozen-embedding models (use the source tag)")
 out_dir = os.path.join(ROOT, "reports", a.tag); os.makedirs(os.path.join(out_dir, "figures"), exist_ok=True)
 PRIMARY = man.get("primary", "faced"); NAME = PRIMARY.upper()
 sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json")))
-F = tdata.load(ROOT, PRIMARY, a.tag)
-DR = tdata.load(ROOT, "dreamer", a.tag) if "dreamer" in man.get("cross_corpus", []) else None
+F = tdata.load(ROOT, PRIMARY, a.tag, man.get("targets", "targets.h5"), extra=man.get("extra"), subj_norm=man.get("subj_norm", False), smooth=man.get("smooth", 0))
+DR = tdata.load(ROOT, "dreamer", a.tag, man.get("targets", "targets.h5"), extra=man.get("extra"), subj_norm=man.get("subj_norm", False), smooth=man.get("smooth", 0)) if "dreamer" in man.get("cross_corpus", []) else None
 folds = [runs.load_fold(p, mcfg) for p in runs.fold_paths(ROOT, a.tag, a.variant)]
 FRACS = np.round(np.linspace(0, 1, 11), 2)
 

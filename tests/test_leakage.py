@@ -14,7 +14,7 @@ def _src(name, code_only=False):
 
 def test_train_reads_only_embeddings_from_cross_corpus():
     s = _src("train.py")
-    assert "fit(" in s and 'X = {ds: tdata.load(ROOT, ds, a.tag) for ds in pcfg["cross_corpus_datasets"]' in s
+    assert "fit(" in s and 'X = {ds: tdata.load(ROOT, ds, a.tag, TARGETS, extra=a.extra, **LOADOPT) for ds in pcfg["cross_corpus_datasets"]' in s
     # the only place cross-corpus dicts are used is the prediction loop, and only their embeddings are read
     assert set(re.findall(r'\bD\["(\w+)"\]', s)) == {"E"}
     assert re.findall(r"\bX\b(?!\.items|\s*=|\))", s) == []        # X never indexed (only X.items() and sorted(X) names)

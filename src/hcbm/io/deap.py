@@ -16,9 +16,10 @@ def load_ratings(xls_path):
     return {sid: g.sort_values("Experiment_id")[["Valence", "Arousal", "Dominance", "Liking"]].values for sid, g in r.groupby("Participant_id")}
 
 
-def process_subject(dat_path, sid, ratings, cfg):
+def process_subject(dat_path, sid, ratings, cfg, montage="shared"):
     d = load_numpy_pickle(dat_path)
-    idx = [cfg["deap"]["shared_channel_idx"][c] for c in cfg["shared_channels"]]
+    from hcbm.io import montage as M
+    _, idx = M.channels(cfg, "deap", montage)
     x = np.asarray(d["data"], dtype=np.float64)[:, idx, BASELINE:]            # (40, 12, 7680) uV, 60 s
     pp, fs = cfg["preprocessing"], cfg["fs"]
     x = P.notch(x, FS, cfg["filtering"]["notch"], pp["notch_q"])

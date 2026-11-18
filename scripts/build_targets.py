@@ -1,4 +1,5 @@
-"""Phase 4.6: concept targets -> data/processed/<dataset>/targets.h5, row-aligned with windows_12ch.h5.
+"""Phase 4.6: concept targets -> data/processed/<dataset>/targets_<class_set>.h5, row-aligned with windows_12ch.h5.
+(class_set from protocol.yaml; the rev 3 DENS run used the older file name targets.h5 with dens6 classes.)
 
 Run: .venv/bin/python -E -P scripts/build_targets.py [dens deap dreamer]   (default: primary + cross-corpus datasets)
 Contents: l1_raw/l1_z/l1_bins (n,37), l2 (n,3) 0-1 + l2_mask, l3 (n,3) pseudo (NaN where undefined), emotion (n,) coarse
@@ -16,14 +17,23 @@ from hcbm.concepts import level1, level2, level3  # noqa: E402
 cfg = load_yaml_config(os.path.join(ROOT, "configs/protocol.yaml"))
 tax = load_yaml_config(os.path.join(ROOT, cfg["emotion_taxonomy_path"]))
 prof = load_yaml_config(os.path.join(ROOT, "configs/appraisal_profiles.yaml"))
-COARSE = tax["coarse_classes"]
+CLASS_SET = cfg.get("class_set", "dens6")
+COARSE = tax["class_sets"][CLASS_SET]
+PROFILES = {**prof["faced"], **prof["dens"]}          # appraisal rows by class name (dens rows win for shared names)
 RATER_MIN_R = cfg["rater_reliability"]["min_r"]
 
 
+def to_active(names):
+    return np.array([COARSE.index(n) if n in COARSE else -1 for n in names])
+
+
 def dreamer_coarse(trial):
-    fine = [tax["dreamer"]["clip_to_fine"][int(t)] for t in trial]
-    m = tax["dreamer"]["fine_to_coarse"]
-    return np.array([COARSE.index(m[f]) if f in m else -1 for f in fine])
+    m = {**tax["dreamer"]["fine_to_coarse"], **tax["dreamer"].get("extra_fine_to_coarse", {})}
+    return to_active([m.get(tax["dreamer"]["clip_to_fine"][int(t)]) for t in trial])
+
+
+def dens_coarse(group):
+    return to_active([tax["dens"]["groups"][int(g)]["coarse"] for g in group])
 
 
 def build(name):
@@ -40,6 +50,7 @@ def build(name):
     out = dict(l1_raw=raw, l1_z=z, l1_bins=bins)
     extra = {}
     if name == "faced":
+        assert CLASS_SET == "faced7", "FACED windows store faced7 class indices"
         fine_names = tax["faced"]["fine_classes"]
         table, dom = level3.profile_table(prof, fine_names)
         l2, m2 = level2.build_level2("faced", lab, lab["fine"], dom)
@@ -57,19 +68,19 @@ def build(name):
         print(f"faced: {len(bad)} unreliable raters (r<{RATER_MIN_R}):", bad)
     else:
         l2, m2 = level2.build_level2(name, lab)
-        emo = dict(dens=lambda: lab["coarse"], dreamer=lambda: dreamer_coarse(trial)).get(name, lambda: np.full(len(sub), -1))()
-        table, _ = level3.profile_table(prof, COARSE, section="dens")
+        emo = dict(dens=lambda: dens_coarse(lab["group"]), dreamer=lambda: dreamer_coarse(trial)).get(name, lambda: np.full(len(sub), -1))()
+        table, _ = level3.profile_table({"all": PROFILES}, COARSE, section="all")
         out.update(l3=level3.build_level3(emo, table), emotion=emo)
         extra = dict(appraisal_status=prof["status"], dominance="real self-rating")
     out.update(l2=l2, l2_mask=m2)
-    dst = os.path.join(ROOT, f"data/processed/{name}/targets.h5")
+    dst = os.path.join(ROOT, f"data/processed/{name}/targets_{CLASS_SET}.h5")
     with h5py.File(dst, "w") as g:
         for k, v in dict(subject_id=sub.astype("S"), trial_id=trial, window_idx=widx, reject=rej).items():
             g.create_dataset(k, data=v)
         for k, v in out.items():
             g.create_dataset(k, data=v)
         g.attrs["concept_names"] = json.dumps(level1.concept_names(ch))
-        g.attrs["meta"] = json.dumps(dict(dataset=name, l2_dims=list(level2.DIMS), l3_dims=list(level3.DIMS),
+        g.attrs["meta"] = json.dumps(dict(dataset=name, class_set=CLASS_SET, l2_dims=list(level2.DIMS), l3_dims=list(level3.DIMS),
                                           **{"coarse_classes": COARSE, **extra}, src=os.path.relpath(src, ROOT)))
     print("saved", dst, {k: v.shape for k, v in out.items()})
 

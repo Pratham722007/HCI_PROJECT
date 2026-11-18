@@ -46,10 +46,21 @@ training:
   max_epochs: 200
   min_epochs: 30               # D24: warm-up; no checkpoint selection or early stopping before it
   patience: 20                 # early stopping on validation macro-F1 (after warm-up)
-  dominance_weight: 1.0        # rev 3: DENS dominance is a real rating (D3 pseudo-label applied to FACED only)
+  dominance_weight: 1.0        # rev 3: DENS dominance is a real rating
+  dominance_weight_pseudo: 0.25  # D3: used when the training corpus has only a dominance pseudo-label (FACED)
   loss_weights: {l1: 1.0, l2: 1.0, l3: 1.0, emotion: 1.0}
   escalation_coverage: 0.80    # threshold keeps 80% of validation windows; the rest are escalated
   max_temperature: 10.0        # D25: temperature clipped to [0.1, 10]
   search:                      # small documented grid (scripts/train.py --search), chosen by mean 5-fold val macro-F1
     lr: [1.0e-3, 3.0e-4]
     dropout: [0.1, 0.3]
+
+# ---- EEGPT fine-tuning (scripts/finetune.py; D26). Heads start from the frozen run's fold models. ----
+finetune:
+  blocks: 2                   # last N of 8 transformer blocks (+ final norm) unfrozen
+  ft_lr_encoder: 1.0e-5
+  ft_lr_head: 3.0e-4
+  ft_batch_size: 32
+  ft_max_epochs: 40
+  ft_min_epochs: 5            # warm-up before checkpoint selection / early stopping
+  ft_patience: 8

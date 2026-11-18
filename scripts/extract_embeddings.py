@@ -17,11 +17,14 @@ ap = argparse.ArgumentParser()
 ap.add_argument("dataset"); ap.add_argument("--scale", type=float, required=True, help="multiplier applied to z-scored windows")
 ap.add_argument("--device", default="cpu"); ap.add_argument("--bs", type=int, default=64); ap.add_argument("--limit", type=int, default=0)
 ap.add_argument("--tag", default="12ch"); ap.add_argument("--random-weights", action="store_true")
+ap.add_argument("--montage", default="12ch", choices=["12ch", "full"], help="full = windows_full.h5 (30 ch) when it exists, else 12ch")
 a = ap.parse_args()
 if a.random_weights and not a.tag.endswith("_random"):
     a.tag += "_random"
 paths = load_yaml_config(os.path.join(ROOT, "configs/paths.yaml"))
-src = os.path.join(ROOT, f"data/processed/{a.dataset}/windows_12ch.h5")
+src = os.path.join(ROOT, f"data/processed/{a.dataset}/windows_full.h5")
+if a.montage == "12ch" or not os.path.exists(src):
+    src = os.path.join(ROOT, f"data/processed/{a.dataset}/windows_12ch.h5")   # DREAMER has no full montage
 out = os.path.join(ROOT, f"data/embeddings/{a.dataset}_{a.tag}.h5"); os.makedirs(os.path.dirname(out), exist_ok=True)
 torch.manual_seed(42)
 with h5py.File(src, "r") as f:
@@ -38,7 +41,7 @@ with h5py.File(src, "r") as f:
     with h5py.File(out, mode) as g:
         if not done:
             g.create_dataset("emb", shape=(N, 4, 512), dtype="float32", chunks=(min(256, N), 4, 512))
-            g.attrs.update(scale=a.scale, ckpt_sha256=sha, n=N, done=0, src=os.path.relpath(src, ROOT))
+            g.attrs.update(scale=a.scale, ckpt_sha256=sha, n=N, done=0, src=os.path.relpath(src, ROOT), channels=",".join(ch))
             for k in ("subject_id", "trial_id", "window_idx", "reject"):
                 g.create_dataset(k, data=f[k][:N])
         t0 = time.time()

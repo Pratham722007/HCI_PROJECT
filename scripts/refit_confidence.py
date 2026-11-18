@@ -14,7 +14,7 @@ from hcbm.models.confidence import fit_temperature, softmax, escalation_threshol
 ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="dens12"); a = ap.parse_args()
 HP = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))["training"]
 man = runs.manifest(ROOT, a.tag)
-F = tdata.load(ROOT, man["primary"], a.tag)
+F = tdata.load(ROOT, man["primary"], a.tag, man.get("targets", "targets.h5"), extra=man.get("extra"), subj_norm=man.get("subj_norm", False), smooth=man.get("smooth", 0))
 for v in runs.ALL_VARIANTS:
     paths = runs.fold_paths(ROOT, a.tag, v)
     if not paths:

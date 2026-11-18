@@ -24,16 +24,38 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--tag", default="12ch"); ap.add_argument("--variants", default=",".join(runs.ALL_VARIANTS))
 ap.add_argument("--search", action="store_true"); ap.add_argument("--seed", type=int, default=42)
 ap.add_argument("--max-epochs", type=int, default=0, help="override (smoke runs)")
+ap.add_argument("--device", default="cuda" if __import__("torch").cuda.is_available() else "cpu")
+ap.add_argument("--extra", default=None, help='extra input features appended to the embedding, e.g. "spectral_full.h5:feats" (D28)')
+ap.add_argument("--aug-tag", default=None, help="second embedding view of the training windows (e.g. 12-ch view), added as extra training rows")
+ap.add_argument("--aug-extra", default=None, help='extra features for the augmentation view, e.g. "spectral_full.h5:feats12"')
+ap.add_argument("--loss-balance", default="none", choices=["none", "uncertainty"], help="D28: learned loss weights (Kendall 2018)")
+ap.add_argument("--subj-norm", action="store_true", help="D29: z-score embeddings per subject (unsupervised)")
+ap.add_argument("--smooth", type=int, default=0, help="D29: moving average over k neighbouring windows within a clip")
 a = ap.parse_args()
 mcfg = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))
 pcfg = load_yaml_config(os.path.join(ROOT, "configs/protocol.yaml"))
 PRIMARY = pcfg["primary_dataset"]
+TARGETS = f"targets_{pcfg.get('class_set', 'dens6')}.h5"
 HP = dict(mcfg["training"])
 if a.max_epochs:
     HP["max_epochs"] = a.max_epochs
 sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json"))); assert_disjoint(sp)
-F = tdata.load(ROOT, PRIMARY, a.tag)
-X = {ds: tdata.load(ROOT, ds, a.tag) for ds in pcfg["cross_corpus_datasets"] if os.path.exists(tdata.emb_path(ROOT, ds, a.tag))}
+LOADOPT = dict(subj_norm=a.subj_norm, smooth=a.smooth)
+F = tdata.load(ROOT, PRIMARY, a.tag, TARGETS, extra=a.extra, **LOADOPT)
+X = {ds: tdata.load(ROOT, ds, a.tag, TARGETS, extra=a.extra, **LOADOPT) for ds in pcfg["cross_corpus_datasets"] if os.path.exists(tdata.emb_path(ROOT, ds, a.tag))}
+HP["loss_balance"] = a.loss_balance
+FT, N = F, len(F["E"])
+if a.aug_tag:                                     # training rows = original view + augmentation view of the SAME windows
+    FA = tdata.load(ROOT, PRIMARY, a.aug_tag, TARGETS, extra=a.aug_extra, **LOADOPT)
+    assert (FA["subject"] == F["subject"]).all()
+    FT = {k: np.concatenate([F[k], FA[k]]) for k in ("E", "emotion", "l1", "l2", "l2_train_mask", "l3")}
+
+
+def aug(tr):
+    return np.concatenate([tr, tr + N]) if a.aug_tag else tr
+HP["n_classes"] = len(F["meta"]["coarse_classes"])                     # from the active class set (6 DENS, 7 FACED)
+if F["meta"].get("dominance") == "pseudo_category_prototype":
+    HP["dominance_weight"] = HP.get("dominance_weight_pseudo", 0.25)   # D3
 emb_dim = F["E"].shape[1]
 keep = ~F["reject"]
 test_rows = np.flatnonzero(keep & np.isin(F["subject"], sp["test"]))
@@ -53,7 +75,7 @@ def cv_score(variant, hp):
     f1s = []
     for k in range(len(sp["folds"])):
         tr, va = fold_rows(k); fix_seed(a.seed)
-        m, _ = fit(runs.build_model(variant, emb_dim, mcfg, hp), F, tr, va, hp, a.seed)
+        m, _ = fit(runs.build_model(variant, emb_dim, mcfg, hp), FT, aug(tr), va, hp, a.seed, device=a.device)
         f1s.append(macro_f1(F["emotion"][va], predict(m, F["E"][va])["logits"].argmax(1), labels7))
     return float(np.mean(f1s))
 
@@ -77,7 +99,7 @@ for variant in a.variants.split(","):
     summ = []
     for k in range(len(sp["folds"])):
         t0 = time.time(); tr, va = fold_rows(k); fix_seed(a.seed)
-        model, hist = fit(runs.build_model(variant, emb_dim, mcfg, hp), F, tr, va, hp, a.seed)
+        model, hist = fit(runs.build_model(variant, emb_dim, mcfg, hp), FT, aug(tr), va, hp, a.seed, device=a.device)
         pv = predict(model, F["E"][va])
         T = fit_temperature(pv["logits"], F["emotion"][va], t_max=HP.get("max_temperature", 10.0))
         thr = escalation_threshold(softmax(pv["logits"], T).max(1), HP["escalation_coverage"])
@@ -96,7 +118,7 @@ for variant in a.variants.split(","):
     json.dump(dict(variant=variant, hp=hp, folds=summ,
                    n_params=int(sum(p.numel() for p in model.parameters()))), open(os.path.join(vdir, "summary.json"), "w"), indent=1)
 
-json.dump(dict(tag=a.tag, primary=PRIMARY, seed=a.seed, git_commit=runs.git_commit(ROOT), ckpt_sha256=F["ckpt_sha256"], input_scale=F["scale"],
+json.dump(dict(tag=a.tag, primary=PRIMARY, targets=TARGETS, extra=a.extra, aug_tag=a.aug_tag, aug_extra=a.aug_extra, loss_balance=a.loss_balance, subj_norm=a.subj_norm, smooth=a.smooth, class_set=pcfg.get("class_set", "dens6"), seed=a.seed, git_commit=runs.git_commit(ROOT), ckpt_sha256=F["ckpt_sha256"], input_scale=F["scale"],
                appraisal_status=F["meta"].get("appraisal_status"), unreliable_raters=F["meta"].get("unreliable_raters"),
                cross_corpus=sorted(X), hp_search=bool(search)),
           open(os.path.join(runs.run_dir(ROOT, a.tag), "manifest.json"), "w"), indent=1)

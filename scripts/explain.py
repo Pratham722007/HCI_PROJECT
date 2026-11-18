@@ -30,11 +30,13 @@ ap.add_argument("--device", default="cpu"); ap.add_argument("--seed", type=int, 
 a = ap.parse_args()
 mcfg = load_yaml_config(os.path.join(ROOT, "configs/model.yaml"))
 man = runs.manifest(ROOT, a.tag)
+if man.get("finetune"):
+    sys.exit(f"{a.tag} is a fine-tuned run: {os.path.basename(__file__)} needs frozen-embedding models (use the source tag)")
 out_dir = os.path.join(ROOT, "reports", a.tag); os.makedirs(out_dir, exist_ok=True)
 PRIMARY = man.get("primary", "faced")
 PSEUDO_DOM = PRIMARY == "faced"                               # FACED dominance is a pseudo-label (D3); DENS is real
 sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json")))
-F = tdata.load(ROOT, PRIMARY, a.tag)
+F = tdata.load(ROOT, PRIMARY, a.tag, man.get("targets", "targets.h5"), extra=man.get("extra"), subj_norm=man.get("subj_norm", False), smooth=man.get("smooth", 0))
 COARSE = F["meta"]["coarse_classes"]; CN = F["concept_names"]
 cbm, ck_c = runs.load_fold(runs.fold_paths(ROOT, a.tag, "level123")[0], mcfg)
 flat, ck_f = runs.load_fold(runs.fold_paths(ROOT, a.tag, "flat")[0], mcfg)
@@ -61,7 +63,7 @@ while len(picked) < min(a.n, len(test)):
         break
 sample = [(PRIMARY, F, r) for r in picked]
 if a.n_deap and "deap" in man.get("cross_corpus", []):
-    DP = tdata.load(ROOT, "deap", a.tag)
+    DP = tdata.load(ROOT, "deap", a.tag, man.get("targets", "targets.h5"), extra=man.get("extra"), subj_norm=man.get("subj_norm", False), smooth=man.get("smooth", 0))
     sample += [("deap", DP, r) for r in rng.choice(np.flatnonzero(~DP["reject"]), a.n_deap, replace=False)]
 
 gen = TemplateExplainer() if a.backend == "template" else QwenExplainer(mcfg["explain"]["qwen_model_name"], mcfg["explain"]["max_tokens"], a.device)

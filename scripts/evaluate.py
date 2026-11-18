@@ -21,7 +21,7 @@ man = runs.manifest(ROOT, a.tag)
 out_dir = os.path.join(ROOT, "reports", a.tag); os.makedirs(out_dir, exist_ok=True)
 PRIMARY = man.get("primary", "faced"); NAME = PRIMARY.upper()
 sp = json.load(open(os.path.join(ROOT, f"data/processed/{PRIMARY}/splits.json")))
-D = {ds: tdata.load(ROOT, ds, a.tag) for ds in [PRIMARY] + man.get("cross_corpus", [])}
+D = {ds: tdata.load(ROOT, ds, man.get("emb_tag", a.tag), man.get("targets", "targets.h5")) for ds in [PRIMARY] + man.get("cross_corpus", [])}   # labels/targets
 F = D[PRIMARY]
 COARSE = F["meta"]["coarse_classes"]
 variants = [v for v in runs.ALL_VARIANTS if runs.load_preds(ROOT, a.tag, v)]
@@ -83,6 +83,20 @@ if "flat" in variants and "level123" in variants:
     lines.append(f"**H1 (non-inferiority, +-2 pp):** CBM(level123) - flat macro-F1 = {d['diff']:+.3f} [{d['lo']:+.3f}, {d['hi']:+.3f}], p = {d['p']:.3f}. "
                  f"{'Non-inferior (CI lower bound > -0.02).' if d['lo'] > -0.02 else 'Non-inferiority NOT shown (CI lower bound <= -0.02).'}\n")
 
+from sklearn.metrics import balanced_accuracy_score  # noqa: E402
+ck = np.char.add(st, "|" + F["trial"][tr].astype(str)); cu, cinv = np.unique(ck, return_inverse=True)
+yc = np.array([yt[cinv == i][0] for i in range(len(cu))]); sc_ = np.array([st[cinv == i][0] for i in range(len(cu))])
+lines += [f"## Balanced accuracy and clip-level results ({NAME} test)\n",
+          f"Clip level = mean of window probabilities within each (subject, clip): {len(cu)} clips. Balanced accuracy = mean per-class recall "
+          "(chance = 1/classes); always predicting the majority class scores accuracy "
+          f"{np.bincount(yt).max() / len(yt):.3f} but balanced accuracy {1 / len(LC):.3f}.\n",
+          "| model | window balanced acc | clip acc [95% CI] | clip macro-F1 [95% CI] | clip balanced acc |", "|---|---|---|---|---|"]
+for v in variants:
+    pw = probs(v, "test"); pc = np.stack([pw[cinv == i].mean(0) for i in range(len(cu))]).argmax(1)
+    r_ca, r_cf = boot(M.acc, sc_, yc, pc), boot(lambda y, p: M.macro_f1(y, p, LC), sc_, yc, pc)
+    lines.append(f"| {v} | {balanced_accuracy_score(yt, pw.argmax(1)):.3f} | {fmt(r_ca)} | {fmt(r_cf)} | {balanced_accuracy_score(yc, pc):.3f} |")
+    rows_csv.append(dict(section="in_corpus_clip", model=v, dataset="test", metric="macro_f1", **r_cf))
+lines.append("")
 lines += [f"## Concept accuracy on {NAME} test (CBM variants, ensemble)\n",
           "| model | L1 mean Pearson r (37 concepts) | L2 valence bin acc | L2 arousal bin acc | L2 dominance bin acc | L2 valence acc, reliable raters only | L3 MAE (pseudo) |", "|---|---|---|---|---|---|---|"]
 rel = ~np.isin(st, list(bad_raters))
@@ -140,9 +154,9 @@ for ds in man.get("cross_corpus", []):
         for (v, name), pr in preds.items():
             qp = 2 * (pr[:, 0] > 0.5) + (pr[:, 1] > 0.5)
             sim.append(f"| {v} | {name} | {fmt(boot(M.acc, subj[m], q[m], qp[m]))} |")
-    if ds == "dreamer":
+    if (X["emotion"] >= 0).any():
         m = ok & (X["emotion"] >= 0)
-        sim += [f"\nDREAMER coarse-emotion accuracy (**secondary**, clip-level target emotion -> {len(COARSE)} classes, unmapped clips excluded):\n",
+        sim += [f"\n{ds.upper()} coarse-emotion accuracy (**secondary**: labels mapped by class name onto the {len(COARSE)} training classes, unmapped excluded; chance ~ {1 / len(set(X['emotion'][m])):.3f}):\n",
                 "| model | acc [95% CI] | macro-F1 |", "|---|---|---|"]
         for v in variants:
             p = probs(v, ds).argmax(1)

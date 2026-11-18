@@ -41,7 +41,7 @@ class HierarchicalCBM(nn.Module):
         self.mu.copy_(torch.as_tensor(mu, dtype=torch.float32)); self.sd.copy_(torch.as_tensor(sd, dtype=torch.float32))
 
     @staticmethod
-    def _apply(c, key, interventions):
+    def _intervene(c, key, interventions):
         if interventions and key in interventions:
             v, m = interventions[key]
             c = torch.where(torch.as_tensor(m, dtype=torch.bool, device=c.device), torch.as_tensor(v, dtype=c.dtype, device=c.device), c)
@@ -49,9 +49,9 @@ class HierarchicalCBM(nn.Module):
 
     def forward(self, emb, interventions=None):
         h = self.l1_trunk((emb - self.mu) / (self.sd + 1e-6))
-        l1 = self._apply(self.l1_out(h), "l1", interventions)
-        l2 = self._apply(torch.sigmoid(self.l2_head(l1)), "l2", interventions)
-        l3 = self._apply(torch.tanh(self.l3_head(l2)), "l3", interventions)
+        l1 = self._intervene(self.l1_out(h), "l1", interventions)
+        l2 = self._intervene(torch.sigmoid(self.l2_head(l1)), "l2", interventions)
+        l3 = self._intervene(torch.tanh(self.l3_head(l2)), "l3", interventions)
         x = {"level1_only": l1, "level12": l2, "level123": l3, "level123_l2": torch.cat([l2, l3], 1),
              "bypass": torch.cat([l3, h], 1)}[self.variant]
         return dict(l1=l1, l2=l2, l3=l3, logits=self.emo_head(x))

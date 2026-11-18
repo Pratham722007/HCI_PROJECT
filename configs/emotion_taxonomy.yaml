@@ -1,6 +1,12 @@
 # Emotion taxonomy. Rev 3 (20 Oct 2026, before any DENS training): 6 coarse classes shared by DENS and DREAMER.
 # Neutral is absent from the DENS click-locked epochs, so the deck's 7 classes become 6 (research-plan.md 3.1).
-coarse_classes: [happy, surprise, fear, disgust, anger, sadness]
+coarse_classes: [happy, surprise, fear, disgust, anger, sadness]   # = class_sets.dens6 (DENS windows store these indices)
+
+# Rev 3b (21 Oct 2026): the active class set follows the training corpus (protocol `class_set`). Test-set labels are mapped
+# onto it by class NAME; classes missing from the active set are excluded (-1) from emotion metrics.
+class_sets:
+  dens6: [happy, surprise, fear, disgust, anger, sadness]
+  faced7: [happy, tenderness, anger, fear, disgust, sadness, neutral]   # order = src/hcbm/io/faced.py COARSE
 
 dens:
   # 8 self-report groups of the DENS group-wise epochs (folder Group-01..08) -> coarse class. We follow the authors'
@@ -71,6 +77,7 @@ dreamer:
   clip_to_fine: {1: calmness, 2: surprise, 3: amusement, 4: fear, 5: excitement, 6: disgust, 7: happiness, 8: anger, 9: sadness,
                  10: disgust, 11: calmness, 12: amusement, 13: happiness, 14: anger, 15: fear, 16: excitement, 17: sadness, 18: surprise}
   fine_to_coarse: {amusement: happy, excitement: happy, happiness: happy, surprise: surprise, fear: fear, disgust: disgust, anger: anger, sadness: sadness}
+  extra_fine_to_coarse: {calmness: neutral}   # used only when the active class set has `neutral` (faced7)
 
 deap:
   # quadrants only (valence/arousal > 5, ratings from participant_ratings.xls)

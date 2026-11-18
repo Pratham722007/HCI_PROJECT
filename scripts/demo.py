@@ -27,7 +27,7 @@ pcfg = load_yaml_config(os.path.join(ROOT, "configs/protocol.yaml")); mcfg = loa
 paths = load_yaml_config(os.path.join(ROOT, "configs/paths.yaml"))
 man = runs.manifest(ROOT, a.tag); DS = man["primary"]
 sp = json.load(open(os.path.join(ROOT, f"data/processed/{DS}/splits.json")))
-D = tdata.load(ROOT, DS, a.tag)
+D = tdata.load(ROOT, DS, a.tag, man.get("targets", "targets.h5"), extra=man.get("extra"), subj_norm=man.get("subj_norm", False), smooth=man.get("smooth", 0))
 C = D["meta"]["coarse_classes"]; CN = D["concept_names"]
 fmt = lambda v: "[" + ", ".join(f"{x:+.2f}" for x in v) + "]"  # noqa: E731
 W = lambda s: print(textwrap.fill(s, 110, initial_indent="    ", subsequent_indent="    "))  # noqa: E731
@@ -44,12 +44,15 @@ with h5py.File(os.path.join(ROOT, f"data/processed/{DS}/windows_12ch.h5"), "r") 
 dec = lambda v: v.decode() if isinstance(v, bytes) else v  # noqa: E731
 
 step(1, f"Input: one 4 s EEG window ({DS.upper()} row {r}, {'held-out TEST subject' if r in set(test) else 'train/val subject'})")
-print(f"    subject {D['subject'][r]}, epoch {D['trial'][r]}, 12 channels x 1024 samples @ 256 Hz ({', '.join(ch)})")
+chs = "30 channels" if man.get("extra") or "30" in a.tag else f"{len(ch)} channels"
+print(f"    subject {D['subject'][r]}, clip/trial {D['trial'][r]}, {chs} x 1024 samples @ 256 Hz (concept Level 1 uses the 12 shared: {', '.join(ch)})")
 if "word" in lab:
     print(f"    self-reported emotion word: {dec(lab['word'])}  ->  true class: {C[D['emotion'][r]]}")
-print(f"    self-ratings (1-9): valence {lab['valence_raw']:.2f}, arousal {lab['arousal_raw']:.2f}, dominance {lab.get('dominance_raw', np.nan):.2f}")
+scale = {"faced": "0-7", "dreamer": "1-5"}.get(DS, "1-9")
+dom = f", dominance {lab['dominance_raw']:.2f}" if "dominance_raw" in lab else " (no dominance rating in this dataset)"
+print(f"    self-ratings ({scale}): valence {lab['valence_raw']:.2f}, arousal {lab['arousal_raw']:.2f}{dom}")
 
-step(2, "EEGPT encoder (frozen) -> embedding 4 x 512 = 2048 numbers")
+step(2, f"EEGPT encoder (frozen) -> 2048 numbers" + (f" + {D['E'].shape[1] - 2048} spectral features = {D['E'].shape[1]} model inputs" if D["E"].shape[1] > 2048 else ""))
 e = D["E"][r:r + 1]
 if not a.no_recompute:
     from hcbm.models.eegpt_encoder import EEGPTEncoder
@@ -110,7 +113,7 @@ print(f"    valence-word judge: expected {'positive' if want > 0 else 'negative'
 step(10, "Human-in-the-loop: expert replaces Level 2 with the real self-ratings")
 oi = predict(cbm, e, {"l2": (D["l2"][r:r + 1], np.ones((1, 3), bool))}); pi = softmax(oi["logits"], ck["temperature"])[0]
 print(f"    L2 {fmt(o['l2'][0])} -> {fmt(D['l2'][r])}  =>  emotion {pred} ({p.max():.0%}) -> "
-      f"{C[pi.argmax()]} ({pi.max():.0%})  [{'correct' if pi.argmax() == D['emotion'][r] else 'still wrong'}]")
+      f"{C[pi.argmax()]} ({pi.max():.0%})  [{'correct' if pi.argmax() == D['emotion'][r] else ('now wrong' if p.argmax() == D['emotion'][r] else 'still wrong')}]")
 oi3 = predict(cbm, e, {"l3": (D["l3"][r:r + 1], np.ones((1, 3), bool))}); p3 = softmax(oi3["logits"], ck["temperature"])[0]
 print(f"    (correcting L3 with the pseudo-label instead gives {C[p3.argmax()]}: this leaks the class by construction)")
 
